@@ -2,7 +2,15 @@
 
 ## Status at handoff
 
-The product strategy and interactive prototype are complete enough to start structured discovery and Sprint 0 engineering.
+The product strategy and interactive prototype are complete. A production Sprint 0 foundation now exists alongside the unchanged prototype; it is ready for clean-checkout CI, provider selection, staging deployment, and structured discovery.
+
+Production foundation added on 2026-08-19:
+
+- `apps/web`: Next.js production landing page, early-access flow, and professional shell.
+- `services/api`: Java 25 / Spring Boot 4.1 modular monolith with identity, acquisition, patient-boundary, audit, and platform foundations.
+- `contracts/openapi` and `packages/api-client`: versioned OpenAPI contract and generated TypeScript client.
+- `infra`: local PostgreSQL plus a portable Fly.io deployment template.
+- `docs/adr`, `docs/security`, `docs/runbooks`, and `docs/sprint-0-execution-plan.md`: decisions, threat controls, operations, and the two-week execution gate.
 
 The prototype currently demonstrates:
 
@@ -38,6 +46,9 @@ These are informed recommendations, not immutable rules. Change them through a s
 - `app/page.tsx`: current interaction model for all four surfaces.
 - `app/globals.css`: current visual language and responsive behavior.
 - `.openai/hosting.json`: retains the existing Sites project connection.
+- `apps/web`: production Next.js application; do not couple it to prototype state.
+- `services/api`: production modular monolith and PostgreSQL integration tests.
+- `contracts/openapi` and `packages/api-client`: API source contract and generated web client.
 - `docs/`: full product/market/architecture material.
 
 ## Prototype-to-production migration strategy

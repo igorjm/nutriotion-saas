@@ -49,3 +49,15 @@ The prototype is a design specification and validation tool. Production developm
 - Initial managed infrastructure: Vercel + Fly.io GRU + Supabase São Paulo, behind portable adapters.
 
 Read `AGENTS.md` and `docs/HANDOFF.md` before changing architecture or starting Sprint 0.
+
+## Production foundation
+
+The Sprint 0 production foundation now lives alongside the preserved prototype:
+
+- `apps/web/` — production Next.js public, professional, and future patient-PWA routes.
+- `services/api/` — Java 25 / Spring Boot 4.1 modular monolith.
+- `contracts/openapi/` and `packages/api-client/` — versioned REST contract and generated TypeScript client.
+- `infra/local/` — local PostgreSQL environment.
+- `docs/adr/`, `docs/security/`, and `docs/discovery/` — production decisions and release gates.
+
+The root `app/`, Sites configuration, and prototype behavior remain independent from this production code.
