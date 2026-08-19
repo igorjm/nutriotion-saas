@@ -1,0 +1,172 @@
+openapi: 3.1.0
+info:
+  title: Nutrition Platform API
+  version: 0.1.0
+  description: Versioned REST contract for the Brazil-first nutrition practice platform.
+servers:
+  - url: http://localhost:8080
+    description: Local development
+tags:
+  - name: Acquisition
+  - name: Identity
+  - name: Patients
+paths:
+  /api/v1/public/early-access:
+    post:
+      tags: [Acquisition]
+      operationId: requestEarlyAccess
+      summary: Register a professional for founder-led early access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EarlyAccessRequest'
+      responses:
+        '201':
+          description: Interest registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EarlyAccessResponse'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '429':
+          $ref: '#/components/responses/Problem'
+  /api/v1/me/context:
+    get:
+      tags: [Identity]
+      operationId: getSessionContext
+      summary: Resolve the authenticated user and active organization membership
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Resolved session context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionContext'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+  /api/v1/patients/{patientId}:
+    get:
+      tags: [Patients]
+      operationId: getPatientSummary
+      summary: Return a patient only when the authenticated membership has a relationship
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Organization-scoped patient summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientSummary'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    Problem:
+      description: Request failed
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    EarlyAccessRequest:
+      type: object
+      additionalProperties: false
+      required: [name, email, currentTool, source, marketingConsent, consentTextVersion]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 120
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        currentTool:
+          type: string
+          minLength: 2
+          maxLength: 80
+        source:
+          type: string
+          minLength: 2
+          maxLength: 120
+        marketingConsent:
+          type: boolean
+        consentTextVersion:
+          type: string
+          pattern: '^[a-z0-9-]{3,60}$'
+    EarlyAccessResponse:
+      type: object
+      required: [id, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [REGISTERED]
+    SessionContext:
+      type: object
+      required: [userId, displayName, organizationId, organizationName, role]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        organizationId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+        role:
+          type: string
+          enum: [OWNER, NUTRITIONIST]
+    PatientSummary:
+      type: object
+      required: [id, displayName, relationshipStatus]
+      properties:
+        id:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        relationshipStatus:
+          type: string
+          enum: [INVITED, ACTIVE, PAUSED, ARCHIVED]
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri

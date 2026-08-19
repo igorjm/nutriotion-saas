@@ -1,0 +1,13 @@
+:root {
+  --color-ink: #17201e;
+  --color-muted: #64716e;
+  --color-line: #dce4e0;
+  --color-paper: #ffffff;
+  --color-canvas: #f7f5ef;
+  --color-brand-dark: #173f3b;
+  --color-brand-action: #267565;
+  --color-brand-soft: #dfeee9;
+  --color-human-accent: #e99763;
+  --color-ai-draft: #7568a7;
+  --space-unit: 8px;
+}

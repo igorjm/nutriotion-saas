@@ -1,0 +1,44 @@
+name: nutrition-platform-local
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: nutrition_platform
+      POSTGRES_USER: nutrition
+      POSTGRES_PASSWORD: nutrition_local_only
+    ports:
+      - "5432:5432"
+    volumes:
+      - nutrition-platform-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nutrition -d nutrition_platform"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    security_opt:
+      - no-new-privileges:true
+
+  api:
+    profiles: ["full"]
+    build:
+      context: ../../services/api
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_URL: jdbc:postgresql://postgres:5432/nutrition_platform
+      DATABASE_USERNAME: nutrition
+      DATABASE_PASSWORD: nutrition_local_only
+      WEB_ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  nutrition-platform-postgres:
