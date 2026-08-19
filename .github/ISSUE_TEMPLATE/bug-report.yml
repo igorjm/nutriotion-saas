@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a reproducible defect using fictional data.
+title: "bug: "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a defect. Never include real patient data, clinical records, secrets, or production identifiers.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - Prototype
+        - Production web
+        - API
+        - Database or migration
+        - CI or developer tooling
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest reproducible sequence with fictional data.
+      placeholder: |
+        1. Start...
+        2. Open...
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Commit, browser, operating system, Java/Node versions, and relevant profile.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed all personal, patient, clinical, credential, and production data.
+          required: true
+        - label: This report does not describe a vulnerability or data exposure that belongs in a private security advisory.
+          required: true

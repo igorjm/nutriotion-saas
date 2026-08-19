@@ -1,0 +1,50 @@
+name: Product feedback
+description: Share evidence from a nutritionist or patient workflow.
+title: "feedback: "
+labels: [product, needs-triage]
+body:
+  - type: dropdown
+    id: persona
+    attributes:
+      label: Perspective
+      options:
+        - Nutritionist
+        - Patient
+        - Practice operator
+        - Founder or researcher
+    validations:
+      required: true
+  - type: dropdown
+    id: workflow
+    attributes:
+      label: Workflow
+      options:
+        - Switching or import
+        - Consultation preparation
+        - Assessment or clinical record
+        - Nutrition plan
+        - Adherence or patient understanding
+        - Messaging or follow-up
+        - Professional growth
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Describe the observed behavior, frequency, and impact without identifiable patient information.
+    validations:
+      required: true
+  - type: textarea
+    id: current-workaround
+    attributes:
+      label: Current workaround
+      description: How is this handled today, and what does it cost in time, trust, or adherence?
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: This feedback contains no identifiable patient or health information.
+          required: true
