@@ -1,0 +1,61 @@
+name: Production CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  web-and-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+          cache: npm
+          cache-dependency-path: |
+            packages/api-client/package-lock.json
+            apps/web/package-lock.json
+      - name: Install and verify generated API client
+        working-directory: packages/api-client
+        run: |
+          npm ci
+          npm run generate
+          npm run typecheck
+      - name: Ensure generated contract artifacts are committed
+        run: git diff --exit-code -- packages/api-client/src/schema.ts
+      - name: Build production web
+        working-directory: apps/web
+        run: |
+          npm ci
+          npm run lint
+          npm run typecheck
+          npm run build
+
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+      - name: Verify modular monolith, migrations, and tenant isolation
+        working-directory: services/api
+        run: ./mvnw -B verify
+
+  prototype-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+          cache: npm
+      - run: npm ci
+      - run: npm run check:local
