@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/igorjm/nutriotion-saas/security/advisories/new
+    about: Report vulnerabilities and suspected data exposure privately.
+  - name: Explore the prototype
+    url: https://nutrition-practice-prototype.igorjmelo4.chatgpt.site
+    about: Review the current product workflow before proposing product changes.

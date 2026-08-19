@@ -1,63 +1,168 @@
-# Brazil-first Nutrition SaaS
+<div align="center">
 
-This repository is the Codex handoff for a SaaS platform connecting nutritionists and patients, initially in Brazil. It contains the complete interactive prototype, the product/market/architecture strategy, and the context required to continue into production development.
+# Nutrition SaaS
 
-Current prototype: https://nutrition-practice-prototype.igorjmelo4.chatgpt.site
+### A Brazil-first practice platform for nutritionists and patients
 
-## What is included
+Clinical continuity, patient adherence, and professional growth in one focused product.
 
-- `app/` — interactive prototype covering nutritionist web, patient web, patient mobile concept, and acquisition landing page.
-- `docs/product-strategy.md` — searchable version of the full market, product, architecture, AI, LGPD, cost, business-model, risk, and sprint analysis.
-- `docs/product-strategy.pdf` and `docs/product-strategy.docx` — formatted strategy deliverables.
-- `docs/prototype-brief.md` — original centralized UI/UX brief used to create the prototype.
-- `docs/HANDOFF.md` — current state, constraints, recommended sequence, and prototype-to-production boundary.
-- `AGENTS.md` — durable instructions for Codex and other coding agents working in this repository.
+[![Production CI](https://github.com/igorjm/nutriotion-saas/actions/workflows/production-ci.yml/badge.svg)](https://github.com/igorjm/nutriotion-saas/actions/workflows/production-ci.yml)
+[![Java 25](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Spring Boot 4.1](https://img.shields.io/badge/Spring_Boot-4.1-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/license-proprietary-173f3b)](LICENSE)
 
-## Run the prototype locally
+[Explore the prototype](https://nutrition-practice-prototype.igorjmelo4.chatgpt.site) · [Read the strategy](docs/product-strategy.md) · [Sprint 0 plan](docs/sprint-0-execution-plan.md)
 
-Prerequisites: Node.js `>=22.13.0` and npm.
+</div>
+
+> [!IMPORTANT]
+> This repository is in Sprint 0. The prototype uses fictional, hardcoded data. Do not use real patient data, clinical records, secrets, or production identifiers in development, tests, screenshots, or issues.
+
+## The product thesis
+
+Nutrition software should do more than produce a technically correct plan. It should help the professional understand what changed, make safe decisions quickly, support patient follow-through, and grow a sustainable practice.
+
+This product is designed around three connected outcomes:
+
+| Outcome | What the product supports |
+| --- | --- |
+| Better clinical continuity | Consultation preparation, structured records, plan versioning, and auditable publication |
+| Better patient adherence | Clear daily guidance, professional-approved substitutions, lightweight check-ins, and progress context |
+| Better professional growth | Ethical content planning, lead organization, and switching-oriented onboarding |
+
+AI remains assistive throughout: it prepares drafts and summaries, while the nutritionist reviews and approves every clinically relevant change.
+
+## Current surfaces
+
+| Surface | Status | Purpose |
+| --- | --- | --- |
+| Interactive prototype | Available | Validates professional, patient, mobile, and acquisition workflows |
+| Production public web | Sprint 0 foundation | Positioning and consent-aware early-access capture |
+| Professional web | Sprint 0 foundation | Authenticated, Organization-scoped application shell |
+| Modular API | Sprint 0 foundation | Identity, tenancy, audit, outbox, and patient relationship boundaries |
+| Patient PWA | Planned | Responsive MVP experience after the relationship vertical slice |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Browser[Professional and patient browsers]
+    Web[Next.js App Router]
+    API[Spring Boot modular monolith]
+    OIDC[OIDC identity provider]
+    DB[(PostgreSQL)]
+    Worker[PostgreSQL-backed workers]
+    Storage[Private object storage]
+
+    Browser --> Web
+    Web -->|Versioned REST| API
+    API -->|JWT validation| OIDC
+    API --> DB
+    API -->|Transactional outbox| Worker
+    API -->|Signed URLs| Storage
+```
+
+The production direction is intentionally conservative: a modular monolith, shared-schema multi-tenancy, versioned REST, generated clients, PostgreSQL-backed async work, and portable infrastructure boundaries. Microservices, Kafka, Redis, Kubernetes, GraphQL, and vector storage stay out until measured requirements justify them.
+
+## Repository map
+
+```text
+.
+├── app/                       # Preserved high-fidelity prototype
+├── apps/web/                  # Production Next.js application
+├── services/api/              # Java 25 / Spring Boot modular monolith
+├── contracts/openapi/         # Source REST contract
+├── packages/api-client/       # Generated TypeScript client
+├── packages/design-tokens/    # Shared visual tokens
+├── infra/                     # Local and deployment templates
+├── docs/                      # Strategy, ADRs, security, and runbooks
+└── .github/                   # CI and collaboration workflows
+```
+
+The root prototype remains a UX reference. Production behavior is delivered as tested vertical slices under `apps/` and `services/`.
+
+## Quick start
+
+### Prototype
+
+Prerequisites: Node.js 22.19 or newer in the Node 22 line and npm.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Then open the URL printed by Vite. Use the top prototype switcher to move between the four product surfaces.
+Use the prototype switcher to move between the nutritionist, patient web, patient mobile concept, and acquisition surfaces.
 
-For a cross-platform validation suitable for macOS:
+### Production foundation
+
+Prerequisites: Java 25, Node.js 22.19, npm, Docker, and Docker Compose.
+
+```bash
+docker compose -f infra/local/compose.yaml up -d postgres
+SPRING_PROFILES_ACTIVE=dev ./services/api/mvnw -f services/api/pom.xml spring-boot:run
+```
+
+In a second terminal:
+
+```bash
+npm --prefix packages/api-client ci
+npm --prefix apps/web ci
+npm --prefix apps/web run dev
+```
+
+The development API accepts `X-Dev-Subject` only under the `dev` and `test` profiles. Those profiles must never run in a shared or production environment.
+
+## Quality gates
+
+Run the relevant checks before opening a pull request:
 
 ```bash
 npm run check:local
+npm --prefix packages/api-client run check
+npm --prefix apps/web run check
+./services/api/mvnw -f services/api/pom.xml verify
 ```
 
-The existing `npm run build` remains the Sites-compatible Linux build. It uses bounded GNU utilities supplied by the Sites environment.
+CI treats authorization and tenant isolation as release blockers. Database changes require forward-tested Flyway migrations. AI features require scenario evaluation, unsafe-response tests, traceability, and cost measurement before release.
 
-## Important boundary
+## Product and engineering principles
 
-This is a high-fidelity interactive prototype, not the production application. Its data is hardcoded and it does not yet provide real authentication, authorization, persistence, tenancy, clinical audit trails, messaging, payments, or AI calls.
+- Visible customer copy is pt-BR; engineering documentation is English.
+- The nutritionist remains the clinical decision-maker.
+- Every practice is an `Organization`, including solo professionals.
+- Tenant context is resolved from authenticated membership on the server.
+- Patient understanding and adherence matter more than plan complexity.
+- LGPD-sensitive health data is a first-order architecture concern.
+- Small, demonstrable increments beat speculative platform work.
 
-The prototype is a design specification and validation tool. Production development should incrementally replace its mock state with tested domain modules and APIs while preserving the validated workflows.
+## Roadmap
 
-## Recommended production direction
+- [x] Product strategy and high-fidelity workflow prototype
+- [x] Production repository, CI, OpenAPI client, PostgreSQL, tenancy, audit, and threat-model foundations
+- [ ] OIDC provider selection and staging deployment
+- [ ] Professional onboarding → patient invitation → consent → accepted relationship
+- [ ] Consultation and assessment records
+- [ ] Nutrition-plan drafting, versioning, and publication
+- [ ] Patient plan and adherence PWA
+- [ ] First evaluated, low-risk AI workflows
 
-- Nutritionist and patient web: Next.js App Router + TypeScript.
-- Backend: Java 25 + Spring Boot 4.1 + Spring Modulith modular monolith.
-- Data: PostgreSQL + Flyway; shared-schema multi-tenancy with `organization_id` and defense-in-depth RLS where applicable.
-- API: REST + OpenAPI-generated TypeScript client.
-- Async work: transactional outbox + PostgreSQL-backed jobs/JobRunr.
-- MVP patient experience: responsive PWA; Expo/React Native after product validation.
-- Initial managed infrastructure: Vercel + Fly.io GRU + Supabase São Paulo, behind portable adapters.
+## Documentation
 
-Read `AGENTS.md` and `docs/HANDOFF.md` before changing architecture or starting Sprint 0.
+- [Product and engineering handoff](docs/HANDOFF.md)
+- [Product strategy](docs/product-strategy.md)
+- [Prototype brief](docs/prototype-brief.md)
+- [Sprint 0 execution plan](docs/sprint-0-execution-plan.md)
+- [Architecture decisions](docs/adr/)
+- [Threat model](docs/security/threat-model.md)
+- [Local development runbook](docs/runbooks/local-development.md)
 
-## Production foundation
+## Contributing and security
 
-The Sprint 0 production foundation now lives alongside the preserved prototype:
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes. Security concerns and suspected data exposure must follow [SECURITY.md](SECURITY.md) and must not be reported in a public issue.
 
-- `apps/web/` — production Next.js public, professional, and future patient-PWA routes.
-- `services/api/` — Java 25 / Spring Boot 4.1 modular monolith.
-- `contracts/openapi/` and `packages/api-client/` — versioned REST contract and generated TypeScript client.
-- `infra/local/` — local PostgreSQL environment.
-- `docs/adr/`, `docs/security/`, and `docs/discovery/` — production decisions and release gates.
+## License
 
-The root `app/`, Sites configuration, and prototype behavior remain independent from this production code.
+Copyright © 2026 Igor Melo. This is proprietary source-available software. No use, copying, modification, or distribution rights are granted without written permission. See [LICENSE](LICENSE).
