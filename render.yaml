@@ -33,7 +33,6 @@ services:
     dockerfilePath: ./services/api/Dockerfile
     dockerContext: ./services/api
     healthCheckPath: /actuator/health/readiness
-    maxShutdownDelaySeconds: 30
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: production
