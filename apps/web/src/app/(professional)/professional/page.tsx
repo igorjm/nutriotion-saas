@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Activity, ArrowRight, Building2, CheckCircle2, ShieldCheck, UserPlus, Users } from "lucide-react";
 import { getSessionContext } from "@/lib/api/server";
+import { signOut } from "@/app/auth/login/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,10 @@ export default async function ProfessionalHome() {
       <section className="professional-content">
         <header>
           <div><span className="eyebrow">Sprint 0</span><h1>Fundação da prática</h1></div>
-          <span className="environment-badge">STAGING · DADOS FICTÍCIOS</span>
+          <div className="professional-actions">
+            <span className="environment-badge">STAGING · DADOS FICTÍCIOS</span>
+            <form action={signOut}><button className="text-button" type="submit">Sair</button></form>
+          </div>
         </header>
 
         {!context ? (
@@ -28,13 +32,13 @@ export default async function ProfessionalHome() {
             <span className="foundation-icon"><ShieldCheck /></span>
             <div>
               <span className="eyebrow">Identidade protegida</span>
-              <h2>A estrutura está pronta para conectar seu acesso.</h2>
+              <h2>Sessão confirmada; contexto da prática ainda indisponível.</h2>
               <p>
-                O shell de produção já separa identidade, organização e relacionamento com pacientes.
-                Configure o emissor OIDC para validar uma sessão real.
+                O acesso foi validado, mas a API ainda não encontrou uma associação ativa com uma
+                Organization ou está despertando no ambiente gratuito.
               </p>
             </div>
-            <Link className="button primary" href="/auth/callback">Ver estado da autenticação <ArrowRight size={17} /></Link>
+            <Link className="button primary" href="/professional">Tentar novamente <ArrowRight size={17} /></Link>
           </section>
         ) : (
           <section className="auth-foundation-card connected">
@@ -51,7 +55,7 @@ export default async function ProfessionalHome() {
           <article>
             <span><Building2 /></span>
             <small>Limite de acesso</small>
-            <h3>Organization desde o primeiro usuário</h3>
+            <h3>Organização desde o primeiro usuário</h3>
             <p>O tenant é resolvido pela associação autenticada, nunca por um identificador confiado ao navegador.</p>
           </article>
           <article>
