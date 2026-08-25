@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: nutrition-saas-staging-web
+    runtime: node
+    plan: free
+    region: virginia
+    autoDeployTrigger: checksPass
+    buildCommand: npm --prefix packages/api-client ci && npm --prefix packages/api-client run generate && npm --prefix apps/web ci && npm --prefix apps/web run build
+    startCommand: npm --prefix apps/web run start -- --hostname 0.0.0.0
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22.19.0
+      - key: NODE_ENV
+        value: production
+      - key: API_BASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_APP_NAME
+        value: "[PRODUCT_NAME]"
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+        sync: false
+
+  - type: web
+    name: nutrition-saas-staging-api
+    runtime: docker
+    plan: free
+    region: virginia
+    autoDeployTrigger: checksPass
+    dockerfilePath: ./services/api/Dockerfile
+    dockerContext: ./services/api
+    healthCheckPath: /actuator/health/readiness
+    maxShutdownDelaySeconds: 30
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: DATABASE_POOL_SIZE
+        value: "3"
+      - key: OIDC_ISSUER_URI
+        sync: false
+      - key: OIDC_AUDIENCE
+        value: authenticated
+      - key: WEB_ALLOWED_ORIGINS
+        sync: false
