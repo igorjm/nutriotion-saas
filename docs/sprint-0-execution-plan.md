@@ -14,10 +14,10 @@ At the end of Sprint 0, the team can deploy a production-shaped skeleton, authen
 | Workstream | Owner | Deliverable | Current state |
 | --- | --- | --- | --- |
 | Repository foundation | Engineer | Independent web, API, contracts, generated client, local infrastructure | Complete locally |
-| Identity and tenancy | Engineer | OIDC resource server, Membership-based Organization resolution, negative isolation tests | Code complete; provider decision remains |
+| Identity and tenancy | Engineer | Supabase PKCE/SSR, OIDC resource server, Membership-based Organization resolution, audience/MFA and negative isolation tests | Provider and code decision complete; hosted project remains |
 | Data foundation | Engineer | PostgreSQL schema, forward Flyway migration, audit and outbox tables | Complete locally; managed restore drill remains |
 | Public validation | Engineer + nutritionist | Production landing promise and consent-aware early-access capture | Complete locally; rate limit and staging deployment remain |
-| Security and operations | Engineer | Threat model, logging policy, health checks, CI, secrets contract | Complete locally; staging alerts and backup evidence remain |
+| Security and operations | Engineer | Threat model, logging policy, health checks, CI, secrets contract | Free Render Blueprint complete; provider variables, staging alerts, and backup evidence remain |
 | Switching discovery | Nutritionist + engineer observer | At least five interviews and an import-contract recommendation | Guide ready; interviews remain |
 
 ## Ten-day sequence
@@ -33,8 +33,7 @@ Evidence: green CI-equivalent checks, migration history, accepted ADRs.
 
 ### Days 3–4 — identity and tenant boundary
 
-- Score OIDC candidates on MFA, Brazil availability, exportability, price, and operational burden.
-- Select one provider through a short ADR; configure development and staging applications.
+- Use Supabase Auth behind the standard OIDC/JWT adapter; configure local and staging applications.
 - Exercise sign-in, token expiry, missing membership, revoked membership, and cross-Organization patient lookup with fictional data.
 - Add deployment protection that rejects `dev` or `test` profiles outside local and CI environments.
 
@@ -42,8 +41,8 @@ Evidence: authenticated staging session and passing negative authorization cases
 
 ### Days 5–6 — staging and operations
 
-- Select the temporary deployment shape within the R$1,000/month ceiling.
-- Deploy `apps/web` and `services/api` with a São Paulo PostgreSQL database where available.
+- Use the temporary $0 Render Free + Supabase Free staging shape recorded in ADR-0005.
+- Deploy `apps/web` and `services/api` with a São Paulo Supabase project and fictional data only.
 - Configure secrets outside source control, readiness checks, structured operational logs, and error scrubbing.
 - Apply an edge/IP rate limit to public early-access capture.
 

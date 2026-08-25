@@ -18,8 +18,8 @@ Professional identity, Organization membership, patient relationship lookup, ear
 | --- | --- | --- |
 | Cross-tenant IDOR/BOLA | Server-resolved Membership; relationship query; indistinguishable 404; negative integration test | Authorization matrix and independent review |
 | Forged tenant identifier | No organization selector in patient request DTOs | Static rule/check as endpoint count grows |
-| JWT theft or misuse | Stateless resource server; issuer validation boundary | Short tokens, rotation, session view, revocation, MFA |
-| Development-auth escape | Header filter compiled but activated only by `dev`/`test` profiles | Deployment assertion rejecting dev profile |
+| JWT theft or misuse | Supabase PKCE/cookie session; signature, issuer, expiry, and audience validation; `aal2` required on clinical patient routes | Session/device view, revocation, TOTP enrollment and recovery flow |
+| Development-auth escape | Header filter compiled but activated only by `dev`/`test` profiles; Render fixes `production` profile | Deployment assertion rejecting dev profile |
 | Invitation takeover | Not implemented | Opaque one-time token, expiry, recipient binding, attempt limits, audit |
 | Public lead spam | Required fields and idempotent email update | Edge/IP rate limit, abuse telemetry, optional challenge after evidence |
 | Sensitive logs | Trace ID only; error details exclude submitted values | Automated log canary and Sentry scrubbing test |
