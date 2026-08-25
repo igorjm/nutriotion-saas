@@ -43,3 +43,5 @@ springdoc:
 
 app:
   web-allowed-origins: ${WEB_ALLOWED_ORIGINS:http://localhost:3000}
+  security:
+    oidc-audience: ${OIDC_AUDIENCE:authenticated}
