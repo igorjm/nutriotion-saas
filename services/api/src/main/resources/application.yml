@@ -19,6 +19,7 @@ spring:
           issuer-uri: ${OIDC_ISSUER_URI:}
 
 server:
+  port: ${PORT:8080}
   shutdown: graceful
   error:
     include-message: never
