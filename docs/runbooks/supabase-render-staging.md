@@ -36,13 +36,21 @@ Never substitute a Supabase secret or legacy `service_role` key for the publisha
 | `WEB_ALLOWED_ORIGINS` | Exact Render web origin, without a trailing slash | No |
 | `SPRING_PROFILES_ACTIVE` | `production` | No |
 
-Use the Supabase transaction pooler JDBC form below and replace placeholders in the Render dashboard:
+Use the Supabase session pooler JDBC form below and replace placeholders in the Render dashboard. The API and Flyway use prepared statements, so use the session-mode port instead of transaction mode:
 
 ```text
-jdbc:postgresql://<pooler-host>:6543/postgres?sslmode=require&prepareThreshold=0
+jdbc:postgresql://<pooler-host>:5432/postgres?sslmode=require
 ```
 
 Flyway runs forward migrations when the API starts. Do not run multiple manual migration jobs against staging at the same time.
+
+After the first successful API deployment, enable RLS on Flyway's infrastructure table once from the Supabase SQL editor:
+
+```sql
+ALTER TABLE public.flyway_schema_history ENABLE ROW LEVEL SECURITY;
+```
+
+Do this only after Flyway has finished. Flyway holds a lock on its history table while applying migrations, so this statement cannot safely live inside a Flyway migration. The API connects as the table owner and can continue to apply later migrations; Supabase Data API roles receive no access to the table.
 
 ## Supabase Auth settings
 
