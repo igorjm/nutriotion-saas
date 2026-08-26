@@ -5,7 +5,7 @@ services:
     plan: free
     region: virginia
     autoDeployTrigger: checksPass
-    buildCommand: npm --prefix packages/api-client ci && npm --prefix packages/api-client run generate && npm --prefix apps/web ci && npm --prefix apps/web run build
+    buildCommand: npm --prefix packages/api-client ci --include=dev && npm --prefix packages/api-client run generate && npm --prefix apps/web ci --include=dev && npm --prefix apps/web run build
     startCommand: npm --prefix apps/web run start -- --hostname 0.0.0.0
     healthCheckPath: /
     envVars:
