@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
@@ -26,6 +27,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.util.StringUtils;
 
 @Configuration
 @Profile("!dev & !test")
@@ -35,8 +37,21 @@ class JwtSecurityConfiguration {
     @Bean
     JwtDecoder jwtDecoder(
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUri,
+            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:}") String jwkSetUri,
+            @Value("${app.security.jws-algorithm:}") String jwsAlgorithm,
             @Value("${app.security.oidc-audience}") String audience) {
-        NimbusJwtDecoder decoder = (NimbusJwtDecoder) JwtDecoders.fromIssuerLocation(issuerUri);
+        NimbusJwtDecoder decoder;
+        if (StringUtils.hasText(jwkSetUri)) {
+            if (!StringUtils.hasText(jwsAlgorithm)) {
+                throw new IllegalArgumentException(
+                        "app.security.jws-algorithm is required when a JWK Set URI is configured");
+            }
+            var builder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri);
+            builder.jwsAlgorithm(SignatureAlgorithm.from(jwsAlgorithm));
+            decoder = builder.build();
+        } else {
+            decoder = (NimbusJwtDecoder) JwtDecoders.fromIssuerLocation(issuerUri);
+        }
         decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 JwtValidators.createDefaultWithIssuer(issuerUri),
                 audienceValidator(audience)));
