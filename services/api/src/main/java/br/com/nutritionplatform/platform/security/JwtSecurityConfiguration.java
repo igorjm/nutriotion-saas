@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +28,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 
 @Configuration
@@ -75,7 +79,7 @@ class JwtSecurityConfiguration {
                                     "/v3/api-docs/**")
                             .permitAll();
                     if (requireAal2) {
-                        authorize.requestMatchers("/api/v1/patients/**")
+                        authorize.requestMatchers(clinicalAal2Matcher())
                                 .hasAuthority(AAL2_AUTHORITY);
                     }
                     authorize.anyRequest().authenticated();
@@ -83,6 +87,13 @@ class JwtSecurityConfiguration {
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
                         jwt.jwtAuthenticationConverter(supabaseJwtAuthenticationConverter)))
                 .build();
+    }
+
+    static RequestMatcher clinicalAal2Matcher() {
+        PathPatternRequestMatcher.Builder paths = PathPatternRequestMatcher.withDefaults();
+        return new OrRequestMatcher(
+                paths.matcher("/api/v1/patients/**"),
+                paths.matcher(HttpMethod.POST, "/api/v1/patient-invitations"));
     }
 
     @Bean

@@ -320,7 +320,7 @@ components:
           format: date-time
     PatientInvitationPreview:
       type: object
-      required: [organizationName, patientDisplayName, maskedEmail, status, expiresAt]
+      required: [organizationName, patientDisplayName, maskedEmail, status, expiresAt, consentTextVersion, consentText]
       properties:
         organizationName:
           type: string
@@ -334,6 +334,11 @@ components:
         expiresAt:
           type: string
           format: date-time
+        consentTextVersion:
+          type: string
+          enum: [care-relationship-v1]
+        consentText:
+          type: string
     PatientInvitationAcceptanceRequest:
       type: object
       additionalProperties: false
@@ -341,7 +346,7 @@ components:
       properties:
         consentTextVersion:
           type: string
-          pattern: '^[a-z0-9-]{3,60}$'
+          enum: [care-relationship-v1]
     PatientInvitationAcceptanceResponse:
       type: object
       required: [patientId, relationshipStatus, acceptedAt]

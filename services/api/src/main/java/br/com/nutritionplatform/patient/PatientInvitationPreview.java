@@ -7,5 +7,7 @@ public record PatientInvitationPreview(
         String patientDisplayName,
         String maskedEmail,
         String status,
-        Instant expiresAt) {
+        Instant expiresAt,
+        String consentTextVersion,
+        String consentText) {
 }

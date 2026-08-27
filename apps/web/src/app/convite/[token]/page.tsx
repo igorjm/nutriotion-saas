@@ -101,23 +101,16 @@ export default async function PatientInvitationPage({ params, searchParams }: In
         ) : (
           <form className="consent-review" action={acceptInvitation}>
             <input type="hidden" name="token" value={token} />
-            <input type="hidden" name="consentTextVersion" value="care-relationship-v1" />
+            <input type="hidden" name="consentTextVersion" value={preview.consentTextVersion} />
             <div className="signed-in-identity">
               <MailCheck />
               <div><small>Conta conectada</small><strong>{signedInEmail ?? "E-mail confirmado pelo provedor"}</strong></div>
               <button className="text-button" type="submit" formAction={signOutFromInvitation} formNoValidate>Usar outra conta</button>
             </div>
             <div className="consent-copy">
-              <span className="eyebrow">Consentimento · versão care-relationship-v1</span>
+              <span className="eyebrow">Consentimento · versão {preview.consentTextVersion}</span>
               <h3>Ativar o vínculo com {preview.organizationName}</h3>
-              <p>
-                Ao aceitar, você permite que esta organização crie e mantenha seu registro de acompanhamento
-                nutricional, acesse as informações que você decidir fornecer e entre em contato sobre este cuidado.
-              </p>
-              <p>
-                Este consentimento não inclui marketing, não autoriza decisões clínicas automáticas e poderá ser
-                revisto ou retirado pelos canais de privacidade quando esse fluxo estiver disponível.
-              </p>
+              {preview.consentText.split("\n\n").map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             </div>
             <label className="consent-checkbox">
               <input name="consent" type="checkbox" value="accepted" required />

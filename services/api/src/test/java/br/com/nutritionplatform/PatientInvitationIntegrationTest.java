@@ -53,7 +53,12 @@ class PatientInvitationIntegrationTest extends PostgresIntegrationTest {
                 .andExpect(jsonPath("$.organizationName", is("Consultório Mariana")))
                 .andExpect(jsonPath("$.patientDisplayName", is("Camila Ribeiro")))
                 .andExpect(jsonPath("$.maskedEmail", is("c***@example.invalid")))
-                .andExpect(jsonPath("$.status", is("PENDING")));
+                .andExpect(jsonPath("$.status", is("PENDING")))
+                .andExpect(jsonPath("$.consentTextVersion", is("care-relationship-v1")))
+                .andExpect(jsonPath("$.consentText", is("""
+                        Ao aceitar, você permite que esta organização crie e mantenha seu registro de acompanhamento nutricional, acesse as informações que você decidir fornecer e entre em contato sobre este cuidado.
+
+                        Este consentimento não inclui marketing, não autoriza decisões clínicas automáticas e poderá ser revisto ou retirado pelos canais de privacidade quando esse fluxo estiver disponível.""")));
 
         mockMvc.perform(get("/api/v1/patients")
                         .header("X-Dev-Subject", "invitation-professional"))
@@ -73,6 +78,15 @@ class PatientInvitationIntegrationTest extends PostgresIntegrationTest {
                 .andExpect(jsonPath("$.relationshipStatus", is("ACTIVE")));
 
         assertThat(count("consent_record", "patient_person_id", created.patientId())).isEqualTo(1);
+        String consentSnapshot = jdbc.sql("""
+                SELECT text_snapshot
+                FROM consent_record
+                WHERE patient_person_id = :patientId
+                """)
+                .param("patientId", created.patientId())
+                .query(String.class)
+                .single();
+        assertThat(consentSnapshot).contains("não autoriza decisões clínicas automáticas");
         assertThat(count("audit_event", "aggregate_id", created.patientId())).isGreaterThanOrEqualTo(2);
         assertThat(count("outbox_event", "aggregate_id", created.patientId())).isGreaterThanOrEqualTo(2);
 
@@ -147,10 +161,58 @@ class PatientInvitationIntegrationTest extends PostgresIntegrationTest {
                 .andExpect(jsonPath("$.title", is("Patient invitation conflict")));
     }
 
+    @Test
+    void reusesOnePatientIdentityAcrossTwoOrganizations() throws Exception {
+        String email = "shared.patient@example.invalid";
+        CreatedInvitation first = createInvitation(
+                "Paciente Compartilhada",
+                email,
+                "Educação alimentar");
+        acceptInvitation(first, "shared-patient-subject", email);
+
+        CreatedInvitation second = createInvitation(
+                "other-professional",
+                "Paciente Compartilhada",
+                email,
+                "Saúde clínica");
+
+        assertThat(second.patientId()).isEqualTo(first.patientId());
+        acceptInvitation(second, "shared-patient-subject", email);
+        assertThat(count("care_relationship", "patient_person_id", first.patientId())).isEqualTo(2);
+        assertThat(count("patient_person", "user_id", userId("shared-patient-subject"))).isEqualTo(1);
+    }
+
+    @Test
+    void rejectsAConsentVersionThatWasNotServedByTheApi() throws Exception {
+        CreatedInvitation created = createInvitation(
+                "Paciente com cliente antigo",
+                "stale.client@example.invalid",
+                null);
+
+        mockMvc.perform(post("/api/v1/patient-invitations/{token}/accept", created.token())
+                        .with(jwt().jwt(token -> token
+                                .subject("stale-client-subject")
+                                .claim("email", "stale.client@example.invalid")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"consentTextVersion\":\"legacy-client-v0\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title", is("Patient invitation conflict")));
+
+        assertThat(count("consent_record", "patient_person_id", created.patientId())).isZero();
+    }
+
     private CreatedInvitation createInvitation(String name, String email, String careFocus) throws Exception {
+        return createInvitation("invitation-professional", name, email, careFocus);
+    }
+
+    private CreatedInvitation createInvitation(
+            String professionalSubject,
+            String name,
+            String email,
+            String careFocus) throws Exception {
         String careFocusJson = careFocus == null ? "null" : jsonString(careFocus);
         String response = mockMvc.perform(post("/api/v1/patient-invitations")
-                        .header("X-Dev-Subject", "invitation-professional")
+                        .header("X-Dev-Subject", professionalSubject)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -170,6 +232,22 @@ class PatientInvitationIntegrationTest extends PostgresIntegrationTest {
         return new CreatedInvitation(
                 UUID.fromString(jsonField(response, "patientId")),
                 jsonField(response, "token"));
+    }
+
+    private void acceptInvitation(CreatedInvitation invitation, String subject, String email) throws Exception {
+        mockMvc.perform(post("/api/v1/patient-invitations/{token}/accept", invitation.token())
+                        .with(jwt().jwt(token -> token.subject(subject).claim("email", email)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"consentTextVersion\":\"care-relationship-v1\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.relationshipStatus", is("ACTIVE")));
+    }
+
+    private UUID userId(String subject) {
+        return jdbc.sql("SELECT id FROM app_user WHERE external_subject = :subject")
+                .param("subject", subject)
+                .query(UUID.class)
+                .single();
     }
 
     private static String jsonString(String value) {
