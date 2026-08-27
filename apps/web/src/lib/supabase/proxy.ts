@@ -28,7 +28,9 @@ export async function updateSession(request: NextRequest) {
   // Validate the JWT and refresh expiring tokens before any Server Component reads them.
   const { data } = await supabase.auth.getClaims();
 
-  if (request.nextUrl.pathname.startsWith("/professional") && !data?.claims) {
+  const protectedPath = request.nextUrl.pathname.startsWith("/professional")
+    || request.nextUrl.pathname.startsWith("/patient");
+  if (protectedPath && !data?.claims) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/auth/login";
     loginUrl.search = "";

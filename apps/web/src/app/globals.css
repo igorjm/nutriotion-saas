@@ -122,9 +122,9 @@ h1, h2, h3, p { margin: 0; }
 .professional-sidebar { min-height: 100vh; padding: 27px 18px; display: flex; flex-direction: column; color: #d8e6e1; background: var(--green-900); }
 .brand.inverted { color: #fff; }
 .professional-sidebar nav { margin-top: 45px; display: grid; gap: 7px; }
-.professional-sidebar nav span { padding: 12px; display: flex; align-items: center; gap: 11px; border-radius: 9px; color: #bcd0c9; font-size: 13px; }
+.professional-sidebar nav a { padding: 12px; display: flex; align-items: center; gap: 11px; border-radius: 9px; color: #bcd0c9; font-size: 13px; }
 .professional-sidebar nav svg { width: 18px; }
-.professional-sidebar nav span.active { color: #fff; background: rgba(255,255,255,.12); box-shadow: inset 3px 0 var(--coral); }
+.professional-sidebar nav a.active { color: #fff; background: rgba(255,255,255,.12); box-shadow: inset 3px 0 var(--coral); }
 .security-note { margin-top: auto; padding: 13px; display: flex; gap: 10px; border-radius: 11px; background: rgba(7,31,28,.35); font-size: 11px; }
 .security-note svg { width: 18px; color: var(--coral); }
 .security-note small { color: #9db7af; }
@@ -143,6 +143,7 @@ h1, h2, h3, p { margin: 0; }
 .foundation-grid article > small { margin-top: 22px; display: block; color: var(--green-700); font-size: 9px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
 .foundation-grid h3 { margin-top: 7px; font-size: 16px; }
 .foundation-grid p { margin-top: 9px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.card-link { margin-top: 17px; display: inline-flex; align-items: center; gap: 5px; }
 
 .professional-actions { display: flex; align-items: center; gap: 14px; }
 .professional-actions form { margin: 0; }
@@ -173,6 +174,96 @@ h1, h2, h3, p { margin: 0; }
 .auth-create:disabled, .text-button:disabled { opacity: .5; cursor: not-allowed; }
 .auth-privacy { margin-top: 24px; color: var(--muted); font-size: 10px; line-height: 1.55; text-align: center; }
 
+.patients-layout { margin-top: 34px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr); gap: 18px; align-items: start; }
+.patient-list-card, .invite-patient-card { border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 12px 36px rgba(23,63,59,.06); }
+.patient-list-card { overflow: hidden; }
+.invite-patient-card { padding: 24px; }
+.section-card-heading { padding-bottom: 22px; display: flex; align-items: center; gap: 15px; }
+.patient-list-card .section-card-heading { padding: 24px; border-bottom: 1px solid var(--line); }
+.section-card-heading h2 { margin-top: 4px; font-size: 20px; letter-spacing: -.025em; }
+.section-card-heading p { margin-top: 7px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.compact-heading .foundation-icon { width: 45px; height: 45px; }
+.invite-patient-form { display: grid; gap: 13px; }
+.invite-patient-form label, .invitation-form label { display: grid; gap: 7px; font-size: 11px; font-weight: 800; }
+.invite-patient-form input, .invite-patient-form select, .invitation-form input { width: 100%; height: 44px; padding: 0 12px; border: 1px solid #c9d5d0; border-radius: 9px; color: var(--ink); background: #fff; }
+.consent-info { padding: 13px; display: flex; gap: 10px; border-radius: 10px; color: var(--green-900); background: var(--green-100); }
+.consent-info svg { width: 18px; flex: 0 0 auto; }
+.consent-info p { font-size: 10px; line-height: 1.55; }
+.invite-patient-card > .form-error { margin-top: 16px; }
+.invitation-success { margin-top: 18px; padding: 14px; display: flex; gap: 11px; border: 1px solid #b7d6cb; border-radius: 11px; color: var(--green-900); background: #edf7f3; }
+.invitation-success > svg { width: 20px; flex: 0 0 auto; }
+.invitation-success strong { font-size: 11px; line-height: 1.45; }
+.invitation-success p { margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+.invitation-link { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; color: var(--green-700); font-size: 11px; font-weight: 850; }
+.patient-list { display: grid; }
+.patient-list-row { min-height: 74px; padding: 13px 20px; display: grid; grid-template-columns: 1.35fr .9fr .75fr; gap: 16px; align-items: center; border-top: 1px solid #edf1ef; color: var(--muted); font-size: 11px; }
+.patient-list-header { min-height: 40px; border-top: 0; color: #76817e; background: #f8faf8; font-size: 9px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+.patient-list-identity { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.patient-list-identity > i { width: 38px; height: 38px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 12px; color: var(--green-900); background: var(--green-100); font-size: 10px; font-style: normal; font-weight: 850; }
+.patient-list-identity > span { min-width: 0; display: grid; gap: 4px; }
+.patient-list-identity strong { overflow: hidden; color: var(--ink); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.patient-list-identity small { overflow: hidden; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.relationship-status { width: fit-content; padding: 7px 9px; display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; color: var(--green-700); background: var(--green-100); font-size: 9px; font-weight: 800; }
+.relationship-status svg { width: 13px; }
+.relationship-status.invited { color: #8b582f; background: var(--coral-soft); }
+.patient-list-state { margin: 20px; padding: 34px; display: flex; justify-content: center; gap: 13px; border: 1px dashed #bfd0cb; border-radius: 12px; color: var(--green-700); background: #fbfcfb; }
+.patient-list-state svg { width: 24px; flex: 0 0 auto; }
+.patient-list-state strong { color: var(--ink); font-size: 12px; }
+.patient-list-state p { margin-top: 5px; color: var(--muted); font-size: 10px; }
+.patient-list-state.error-state { color: #a43f2d; border-color: #e5b8aa; background: #fff6f2; }
+
+.invitation-page { min-height: 100vh; display: grid; grid-template-columns: minmax(340px, .82fr) minmax(520px, 1.18fr); background: #fff; }
+.invitation-intro { min-height: 100vh; padding: clamp(34px, 6vw, 80px); display: flex; flex-direction: column; color: #fff; background: radial-gradient(circle at 20% 80%, rgba(233,151,99,.22), transparent 34%), var(--green-900); }
+.invitation-intro > div:first-of-type { margin: auto 0 42px; max-width: 560px; }
+.invitation-intro .eyebrow { color: #efb58a; }
+.invitation-intro h1 { margin-top: 12px; font-size: clamp(38px, 4.6vw, 62px); line-height: 1.04; letter-spacing: -.052em; }
+.invitation-intro p { margin-top: 20px; color: #bed0ca; font-size: 14px; line-height: 1.7; }
+.invitation-trust { display: grid; gap: 12px; color: #dce9e4; font-size: 11px; }
+.invitation-trust span { display: flex; align-items: center; gap: 9px; }
+.invitation-trust svg { width: 17px; color: var(--coral); }
+.invitation-intro > small { margin-top: 32px; color: #91ada4; font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.invitation-panel { width: min(600px, calc(100% - 48px)); margin: auto; padding: 38px; border: 1px solid var(--line); border-radius: 20px; background: #fff; box-shadow: var(--shadow); }
+.invited-person { padding-bottom: 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--line); }
+.invited-person > i { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 16px; color: #7a4a2d; background: var(--coral-soft); font-size: 13px; font-style: normal; font-weight: 850; }
+.invited-person h2 { margin-top: 4px; font-size: 23px; }
+.invited-person p { margin-top: 4px; color: var(--muted); font-size: 11px; }
+.invitation-form, .consent-review { margin-top: 24px; display: grid; gap: 14px; }
+.form-section-title { margin-bottom: 3px; display: flex; gap: 11px; align-items: center; }
+.form-section-title > svg { width: 20px; color: var(--green-700); }
+.form-section-title div { display: grid; gap: 3px; }
+.form-section-title strong { font-size: 13px; }
+.form-section-title p, .form-footnote { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.signed-in-identity { padding: 12px; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; border-radius: 10px; background: var(--green-100); }
+.signed-in-identity > svg { width: 19px; color: var(--green-700); }
+.signed-in-identity > div { display: grid; gap: 2px; }
+.signed-in-identity small { color: var(--muted); font-size: 8px; text-transform: uppercase; }
+.signed-in-identity strong { font-size: 11px; }
+.consent-copy { padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: #fbfcfb; }
+.consent-copy h3 { margin-top: 7px; font-size: 17px; }
+.consent-copy p { margin-top: 11px; color: var(--muted); font-size: 11px; line-height: 1.65; }
+.consent-checkbox { display: grid; grid-template-columns: 20px 1fr; gap: 9px; align-items: start; color: var(--ink); font-size: 11px; line-height: 1.5; }
+.consent-checkbox input { width: 17px; height: 17px; accent-color: var(--green-700); }
+.invitation-complete { padding: 34px 8px 8px; display: grid; justify-items: center; text-align: center; }
+.invitation-complete > svg { width: 42px; height: 42px; color: var(--green-700); }
+.invitation-complete h3 { margin-top: 15px; font-size: 20px; }
+.invitation-complete p { margin: 8px 0 18px; color: var(--muted); font-size: 11px; }
+.invitation-unavailable { width: min(560px, calc(100% - 32px)); margin: auto; padding: 44px; display: grid; justify-items: center; text-align: center; }
+.invitation-unavailable > svg { width: 44px; height: 44px; color: var(--green-700); }
+.invitation-unavailable h1 { margin-top: 10px; font-size: 28px; }
+.invitation-unavailable p { margin: 12px 0 22px; color: var(--muted); }
+
+.patient-welcome-page { min-height: 100vh; padding: 24px; display: grid; place-items: center; background: radial-gradient(circle at 50% 10%, var(--green-100), transparent 36%), var(--canvas); }
+.patient-welcome-card { width: min(590px, 100%); padding: 44px; text-align: center; border: 1px solid var(--line); border-radius: 20px; background: #fff; box-shadow: var(--shadow); }
+.welcome-check { width: 58px; height: 58px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 18px; color: var(--green-700); background: var(--green-100); }
+.welcome-check svg { width: 29px; height: 29px; }
+.patient-welcome-card h1 { margin-top: 8px; font-size: 34px; letter-spacing: -.045em; }
+.patient-welcome-card > p { margin-top: 15px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.welcome-next { margin-top: 26px; padding: 16px; display: flex; gap: 11px; text-align: left; border-radius: 12px; color: var(--green-900); background: var(--green-100); }
+.welcome-next svg { width: 21px; flex: 0 0 auto; }
+.welcome-next div { display: grid; gap: 4px; }
+.welcome-next strong { font-size: 11px; }
+.welcome-next span { color: var(--muted); font-size: 10px; line-height: 1.5; }
+
 .state-page { min-height: 100vh; padding: 24px; display: grid; place-items: center; background: radial-gradient(circle at 50% 10%, var(--green-100), transparent 34%), var(--canvas); }
 .state-card { width: min(560px, 100%); padding: 40px; text-align: center; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: var(--shadow); }
 .state-card h1 { margin-top: 8px; font-size: 30px; letter-spacing: -.04em; }
@@ -189,9 +280,13 @@ h1, h2, h3, p { margin: 0; }
   .access-section { grid-template-columns: minmax(0, 700px); }
   .professional-shell { grid-template-columns: 80px 1fr; }
   .professional-sidebar { padding-inline: 12px; }
-  .professional-sidebar .brand strong, .professional-sidebar nav span { font-size: 0; }
-  .professional-sidebar nav span { justify-content: center; }
+  .professional-sidebar .brand strong, .professional-sidebar nav a { font-size: 0; }
+  .professional-sidebar nav a { justify-content: center; }
   .security-note { display: none; }
+  .patients-layout { grid-template-columns: 1fr; }
+  .invitation-page { grid-template-columns: 1fr; }
+  .invitation-intro { min-height: auto; }
+  .invitation-intro > div:first-of-type { margin: 70px 0 40px; }
 }
 
 @media (max-width: 680px) {
@@ -228,4 +323,12 @@ h1, h2, h3, p { margin: 0; }
   .auth-intro h1 { font-size: 38px; }
   .auth-intro ul { margin-bottom: 25px; }
   .auth-panel { width: calc(100% - 30px); margin: 30px auto; padding: 30px 22px; }
+  .patient-list-header { display: none; }
+  .patient-list-row { grid-template-columns: 1fr; gap: 9px; }
+  .invitation-intro { padding: 34px 24px; }
+  .invitation-intro h1 { font-size: 38px; }
+  .invitation-panel { width: calc(100% - 30px); margin: 30px auto; padding: 28px 20px; }
+  .signed-in-identity { grid-template-columns: auto 1fr; }
+  .signed-in-identity .text-button { grid-column: 2; justify-self: start; }
+  .patient-welcome-card { padding: 34px 22px; }
 }
