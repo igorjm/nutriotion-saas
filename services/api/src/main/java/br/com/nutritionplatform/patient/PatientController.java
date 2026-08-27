@@ -1,6 +1,7 @@
 package br.com.nutritionplatform.patient;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,5 +20,10 @@ public class PatientController {
     @GetMapping("/{patientId}")
     public PatientSummary get(@PathVariable UUID patientId, Principal principal) {
         return service.getForAuthenticatedSubject(principal.getName(), patientId);
+    }
+
+    @GetMapping
+    public List<PatientListItem> list(Principal principal) {
+        return service.listForAuthenticatedSubject(principal.getName());
     }
 }

@@ -12,10 +12,12 @@ class DatabaseSecurityIntegrationTest extends PostgresIntegrationTest {
             "app_user",
             "audit_event",
             "care_relationship",
+            "consent_record",
             "early_access_lead",
             "membership",
             "organization",
             "outbox_event",
+            "patient_invitation",
             "patient_person");
 
     @Autowired JdbcClient jdbc;
@@ -49,6 +51,19 @@ class DatabaseSecurityIntegrationTest extends PostgresIntegrationTest {
     }
 
     @Test
+    void securesTheImmutableRecordTriggerFunctionSearchPath() {
+        String functionConfig = jdbc.sql("""
+                SELECT array_to_string(proconfig, ',')
+                FROM pg_proc
+                JOIN pg_namespace ON pg_namespace.oid = pg_proc.pronamespace
+                WHERE pg_namespace.nspname = 'public'
+                  AND pg_proc.proname = 'prevent_immutable_record_mutation'
+                """).query(String.class).single();
+
+        assertThat(functionConfig).isEqualTo("search_path=pg_catalog");
+    }
+
+    @Test
     void indexesEveryForeignKeyUsedByTheFoundation() {
         List<String> indexes = jdbc.sql("""
                 SELECT indexname
@@ -57,6 +72,13 @@ class DatabaseSecurityIntegrationTest extends PostgresIntegrationTest {
                 """).query(String.class).list();
 
         assertThat(indexes)
-                .contains("ix_care_relationship_patient_person", "ix_outbox_event_organization");
+                .contains(
+                        "ix_care_relationship_patient_person",
+                        "ix_outbox_event_organization",
+                        "ix_patient_invitation_patient",
+                        "ix_patient_invitation_invited_by",
+                        "ix_patient_invitation_accepted_by",
+                        "ix_consent_record_patient",
+                        "ix_consent_record_user");
     }
 }
