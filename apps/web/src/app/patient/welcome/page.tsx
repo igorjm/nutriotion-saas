@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
+import { BrandLockup } from "@/components/brand-lockup";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export default async function PatientWelcomePage() {
   return (
     <main className="patient-welcome-page">
       <section className="patient-welcome-card">
+        <BrandLockup showPromise />
         <span className="welcome-check"><CheckCircle2 /></span>
         <span className="eyebrow">Vínculo ativo</span>
         <h1>Seu acompanhamento foi conectado.</h1>

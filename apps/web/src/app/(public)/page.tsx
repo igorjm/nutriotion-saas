@@ -1,3 +1,5 @@
+import { brand } from "@nutrition-platform/brand";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -10,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import { EarlyAccessForm } from "@/components/early-access-form";
+import { BrandLockup } from "@/components/brand-lockup";
 
 const benefits = [
   {
@@ -33,10 +36,7 @@ export default function LandingPage() {
   return (
     <main className="marketing-shell">
       <header className="marketing-header">
-        <Link className="brand" href="/" aria-label="Página inicial">
-          <span className="brand-mark" aria-hidden="true" />
-          <strong>[PRODUCT_NAME]</strong>
-        </Link>
+        <BrandLockup showPromise />
         <nav aria-label="Navegação pública">
           <a href="#produto">Produto</a>
           <a href="#seguranca">Segurança</a>
@@ -68,7 +68,7 @@ export default function LandingPage() {
           <div className="preview-top"><span /><span /><span /><small>Seu consultório hoje</small></div>
           <div className="preview-body">
             <aside>
-              <strong>[PRODUCT_NAME]</strong>
+              <strong>{brand.name}</strong>
               {['Hoje', 'Pacientes', 'Consultas', 'Planos', 'Crescimento'].map((item, index) => (
                 <span className={index === 0 ? "active" : ""} key={item}>{item}</span>
               ))}
@@ -104,6 +104,28 @@ export default function LandingPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="continuity-section" aria-labelledby="continuity-title">
+        <div>
+          <span className="eyebrow">{brand.promise}</span>
+          <h2 id="continuity-title">Dois caminhos, um cuidado construído em parceria.</h2>
+          <p>
+            A Vincelia aproxima nutricionista e paciente sem confundir seus papéis. Cada decisão
+            continua profissional, cada orientação fica mais clara e cada retorno parte do contexto
+            que já foi construído.
+          </p>
+          <span className="continuity-signature">{brand.descriptor}</span>
+        </div>
+        <figure className="continuity-artwork">
+          <Image
+            alt="Dois caminhos, em verde e coral, avançam lado a lado e formam um V."
+            height={1024}
+            sizes="(max-width: 980px) 100vw, 52vw"
+            src="/brand/continuity-paths.webp"
+            width={1536}
+          />
+        </figure>
       </section>
 
       <section className="safety-section" id="seguranca">
@@ -142,8 +164,8 @@ export default function LandingPage() {
       </section>
 
       <footer>
-        <span className="brand"><span className="brand-mark" aria-hidden="true" /><strong>[PRODUCT_NAME]</strong></span>
-        <p>Plataforma brasileira para nutricionistas e pacientes.</p>
+        <BrandLockup className="inverted" />
+        <p>{brand.descriptor} para nutricionistas e pacientes.</p>
         <small>Produto em validação · 2026</small>
       </footer>
     </main>

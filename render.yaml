@@ -15,8 +15,6 @@ services:
         value: production
       - key: API_BASE_URL
         sync: false
-      - key: NEXT_PUBLIC_APP_NAME
-        value: "[PRODUCT_NAME]"
       - key: NEXT_PUBLIC_APP_URL
         sync: false
       - key: NEXT_PUBLIC_SUPABASE_URL

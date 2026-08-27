@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { KeyRound, Mail, ShieldCheck, UserPlus } from "lucide-react";
+import { BrandLockup } from "@/components/brand-lockup";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createProfessionalAccount, requestMagicLink, signInWithPassword } from "./actions";
 
@@ -24,7 +24,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <main className="auth-page">
       <section className="auth-intro">
-        <Link className="brand" href="/"><span className="brand-mark" /><strong>[PRODUCT_NAME]</strong></Link>
+        <BrandLockup className="inverted" showPromise />
         <div>
           <span className="eyebrow">Acesso profissional</span>
           <h1>Sua prática protegida desde o primeiro acesso.</h1>

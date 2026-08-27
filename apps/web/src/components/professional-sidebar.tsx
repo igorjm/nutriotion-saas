@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { Activity, ShieldCheck, Users } from "lucide-react";
+import Link from "next/link";
+import { BrandLockup } from "@/components/brand-lockup";
 
 type ProfessionalSidebarProps = {
   active: "foundation" | "patients";
@@ -8,10 +9,7 @@ type ProfessionalSidebarProps = {
 export function ProfessionalSidebar({ active }: ProfessionalSidebarProps) {
   return (
     <aside className="professional-sidebar">
-      <Link className="brand inverted" href="/">
-        <span className="brand-mark" />
-        <strong>[PRODUCT_NAME]</strong>
-      </Link>
+      <BrandLockup className="inverted" />
       <nav aria-label="Navegação profissional">
         <Link className={active === "foundation" ? "active" : undefined} href="/professional">
           <Activity /> Fundação
