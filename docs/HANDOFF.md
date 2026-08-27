@@ -2,7 +2,7 @@
 
 ## Status at handoff
 
-The product strategy and interactive prototype are complete. A production Sprint 0 foundation now exists alongside the unchanged prototype; it is ready for clean-checkout CI, provider selection, staging deployment, and structured discovery.
+The product strategy and interactive prototype are complete. A production Sprint 0 foundation now exists alongside the unchanged prototype; it is ready for clean-checkout CI, provider selection, staging deployment, and structured discovery. `docs/brand-interface-foundation.md` now defines Vincelia as the conditional working masterbrand and translates the product strategy into an implementation-ready interface layout.
 
 Production foundation added on 2026-08-19:
 
@@ -122,7 +122,7 @@ Record time-on-task, confusion points, missing information, trust concerns, and 
 
 ## Important open decisions
 
-- Product name and domain.
+- Validate and clear the working name Vincelia, then register the selected domain. Ritmera is no longer the fallback after an exact-name collision screen.
 - Exact commercial pricing and founder-plan terms.
 - Authentication provider choice after validating Brazil-region availability, cost, exportability, and MFA requirements.
 - Minimum viable import path for professionals switching from WebDiet or Dietbox.

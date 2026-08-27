@@ -13,7 +13,7 @@ Clinical continuity, patient adherence, and professional growth in one focused p
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/license-proprietary-173f3b)](LICENSE)
 
-[Explore the prototype](https://nutrition-practice-prototype.igorjmelo4.chatgpt.site) · [Read the strategy](docs/product-strategy.md) · [Sprint 0 plan](docs/sprint-0-execution-plan.md)
+[Explore the prototype](https://nutrition-practice-prototype.igorjmelo4.chatgpt.site) · [Read the strategy](docs/product-strategy.md) · [Brand and interface](docs/brand-interface-foundation.md) · [Sprint 0 plan](docs/sprint-0-execution-plan.md)
 
 </div>
 
@@ -153,6 +153,7 @@ CI treats authorization and tenant isolation as release blockers. Database chang
 
 - [Product and engineering handoff](docs/HANDOFF.md)
 - [Product strategy](docs/product-strategy.md)
+- [Brand and interface foundation](docs/brand-interface-foundation.md)
 - [Prototype brief](docs/prototype-brief.md)
 - [Sprint 0 execution plan](docs/sprint-0-execution-plan.md)
 - [Architecture decisions](docs/adr/)
