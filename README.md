@@ -1,10 +1,10 @@
 <div align="center">
 
-# Nutrition SaaS
+# Vincelia
 
-### A Brazil-first practice platform for nutritionists and patients
+### Cuidado que continua.
 
-Clinical continuity, patient adherence, and professional growth in one focused product.
+Plataforma brasileira de cuidado nutricional para nutricionistas e pacientes.
 
 [![Production CI](https://github.com/igorjm/nutriotion-saas/actions/workflows/production-ci.yml/badge.svg)](https://github.com/igorjm/nutriotion-saas/actions/workflows/production-ci.yml)
 [![Java 25](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
@@ -75,6 +75,7 @@ The production direction is intentionally conservative: a modular monolith, shar
 ├── services/api/              # Java 25 / Spring Boot modular monolith
 ├── contracts/openapi/         # Source REST contract
 ├── packages/api-client/       # Generated TypeScript client
+├── packages/brand/            # Typed working identity and source mark
 ├── packages/design-tokens/    # Shared visual tokens
 ├── infra/                     # Local and deployment templates
 ├── docs/                      # Strategy, ADRs, security, and runbooks

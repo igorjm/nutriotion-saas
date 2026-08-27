@@ -16,7 +16,6 @@ Provider dashboards are the only place to enter secrets. Never put a database pa
 | Variable | Value source | Secret |
 | --- | --- | --- |
 | `API_BASE_URL` | Render API public `https://...onrender.com` URL | No |
-| `NEXT_PUBLIC_APP_NAME` | Selected product name | No |
 | `NEXT_PUBLIC_APP_URL` | Render web public `https://...onrender.com` URL | No |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | No |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key | Designed for browser use |

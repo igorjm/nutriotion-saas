@@ -35,7 +35,7 @@ This is not merely a meal-plan generator, calorie counter, weight-loss applicati
 
 The first paying customers are independent Brazilian clinical nutritionists switching from products such as WebDiet, Dietbox, or Nutrium. They already have patients and care about fast migration, clinical reliability, ease of use, patient engagement, and professional differentiation.
 
-The product name is not finalized. Use `[PRODUCT_NAME]` as a neutral wordmark. Do not invent or embed a permanent logo. The architecture should allow the placeholder to be replaced globally.
+Use **Vincelia** as the centrally configured working identity, with the promise **“Cuidado que continua.”** The name and visual mark remain provisional until the release gate in `docs/brand-interface-foundation.md` is complete; do not treat their implementation as trademark clearance.
 
 ## Primary personas
 
@@ -923,7 +923,7 @@ Primary conversion: apply for early access or request a guided demonstration.
 
 ### 1. Navigation
 
-- Placeholder wordmark `[PRODUCT_NAME]`.
+- Vincelia working wordmark and shared V-path mark.
 - Como funciona.
 - Para nutricionistas.
 - Experiência do paciente.

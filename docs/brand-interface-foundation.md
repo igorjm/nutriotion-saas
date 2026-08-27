@@ -1,7 +1,7 @@
 # Vincelia brand and interface foundation
 
-Status: working product direction, not a cleared trademark or permanent visual identity  
-Updated: 2026-08-25  
+Status: working identity implemented in product surfaces; not a cleared trademark or permanent visual identity
+Updated: 2026-08-27
 Applies to: public site, nutritionist web, patient PWA, and future patient mobile app
 
 ## Working decision
@@ -10,7 +10,7 @@ Use **Vincelia** as the working masterbrand while the founders complete pronunci
 
 The brand idea is **vínculo em movimento**: the product helps the nutritionist and patient remain connected between consultations while the professional practice moves forward. This supports the complete product promise—clinical continuity, patient adherence, and ethical practice growth—without reducing the system to meal plans or AI.
 
-This document is an implementation contract for the next design and frontend slices. It does not authorize a public launch, domain purchase, permanent logo, or trademark claim.
+This document is the implementation contract for design and frontend slices. The working identity is now present in the code and prototype by founder direction; that does not authorize a public launch, domain purchase, permanent logo, or trademark claim.
 
 ## 1. Name system
 
@@ -220,14 +220,14 @@ Keep the nutritionist identity and practice visible in the header. Put profile, 
 
 ## 7. Implementation map
 
-When the founder name gate passes, implement in this order:
+The working identity implementation follows this order. Items 1, 5, and 6 are now present; the remaining token, shell, and role-routing work stays incremental:
 
-1. Add one typed brand configuration for name, descriptor, canonical URLs, support contacts, and metadata. Do not scatter string literals.
+1. [x] Add one typed brand configuration for name, descriptor, candidate URLs, and metadata. Do not scatter string literals.
 2. Keep framework-neutral color and spacing values in `packages/design-tokens`; add semantic state tokens only after accessibility checks.
 3. Create separate `MarketingShell`, `ProfessionalShell`, and `PatientShell` components in `apps/web`.
 4. Add a server-side role router after authentication; do not let the browser choose a trusted Organization or role.
-5. Replace `[PRODUCT_NAME]` in production metadata, manifest, landing, and authenticated shell from the shared brand configuration.
-6. Deliver the professional invitation and patient consent layouts as the first cross-role vertical slice.
+5. [x] Replace temporary names in metadata, manifest, landing, and authenticated shell from the shared brand configuration.
+6. [x] Deliver the professional invitation and patient consent layouts as the first cross-role vertical slice.
 7. Add later navigation destinations only when their API, authorization, persistence, tests, telemetry, and user-visible behavior exist together.
 
 Do not rename Java packages, Maven artifacts, npm scopes, or API identifiers merely to reflect the marketing name. Those internal identifiers are intentionally generic and can remain stable through a future brand change.
