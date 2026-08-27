@@ -55,6 +55,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/patients": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List patients within the authenticated professional's resolved Organization */
+        get: operations["listPatients"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patient-invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create an Organization-scoped patient invitation */
+        post: operations["createPatientInvitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public/patient-invitations/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Preview a patient invitation without exposing its full email address */
+        get: operations["getPatientInvitationPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patient-invitations/{token}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept an invitation using the authenticated patient's verified email */
+        post: operations["acceptPatientInvitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -90,6 +158,55 @@ export interface components {
             displayName: string;
             /** @enum {string} */
             relationshipStatus: "INVITED" | "ACTIVE" | "PAUSED" | "ARCHIVED";
+        };
+        PatientListItem: {
+            /** Format: uuid */
+            id: string;
+            displayName: string;
+            /** Format: email */
+            contactEmail?: string | null;
+            careFocus?: string | null;
+            /** @enum {string} */
+            relationshipStatus: "INVITED" | "ACTIVE" | "PAUSED" | "ARCHIVED";
+            /** Format: date-time */
+            relationshipCreatedAt: string;
+        };
+        CreatePatientInvitationRequest: {
+            displayName: string;
+            /** Format: email */
+            email: string;
+            careFocus?: string | null;
+        };
+        PatientInvitationCreated: {
+            /** Format: uuid */
+            invitationId: string;
+            /** Format: uuid */
+            patientId: string;
+            token: string;
+            /** @enum {string} */
+            status: "PENDING";
+            /** Format: date-time */
+            expiresAt: string;
+        };
+        PatientInvitationPreview: {
+            organizationName: string;
+            patientDisplayName: string;
+            maskedEmail: string;
+            /** @enum {string} */
+            status: "PENDING" | "ACCEPTED" | "REVOKED" | "EXPIRED";
+            /** Format: date-time */
+            expiresAt: string;
+        };
+        PatientInvitationAcceptanceRequest: {
+            consentTextVersion: string;
+        };
+        PatientInvitationAcceptanceResponse: {
+            /** Format: uuid */
+            patientId: string;
+            /** @enum {string} */
+            relationshipStatus: "ACTIVE";
+            /** Format: date-time */
+            acceptedAt: string;
         };
         Problem: {
             /** Format: uri */
@@ -189,6 +306,110 @@ export interface operations {
             };
             401: components["responses"]["Problem"];
             404: components["responses"]["Problem"];
+        };
+    };
+    listPatients: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Organization-scoped patient list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientListItem"][];
+                };
+            };
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+        };
+    };
+    createPatientInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePatientInvitationRequest"];
+            };
+        };
+        responses: {
+            /** @description Invitation created; the raw capability token is returned once */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientInvitationCreated"];
+                };
+            };
+            400: components["responses"]["Problem"];
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getPatientInvitationPreview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invitation preview */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientInvitationPreview"];
+                };
+            };
+            404: components["responses"]["Problem"];
+        };
+    };
+    acceptPatientInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PatientInvitationAcceptanceRequest"];
+            };
+        };
+        responses: {
+            /** @description Care relationship activated and consent recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientInvitationAcceptanceResponse"];
+                };
+            };
+            400: components["responses"]["Problem"];
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
         };
     };
 }

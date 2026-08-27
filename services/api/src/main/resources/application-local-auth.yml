@@ -15,6 +15,7 @@ spring:
 
 app:
   security:
+    require-aal2: false
     jws-algorithm: ES256
   local-auth:
     seed-email: ${LOCAL_AUTH_EMAIL:mariana.local@example.invalid}

@@ -61,20 +61,25 @@ class JwtSecurityConfiguration {
     @Bean
     SecurityFilterChain jwtSecurityFilterChain(
             HttpSecurity http,
+            @Value("${app.security.require-aal2:true}") boolean requireAal2,
             Converter<Jwt, ? extends AbstractAuthenticationToken> supabaseJwtAuthenticationConverter)
             throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/api/v1/public/**",
-                                "/actuator/health/**",
-                                "/v3/api-docs/**")
-                        .permitAll()
-                        .requestMatchers("/api/v1/patients/**").hasAuthority(AAL2_AUTHORITY)
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers(
+                                    "/api/v1/public/**",
+                                    "/actuator/health/**",
+                                    "/v3/api-docs/**")
+                            .permitAll();
+                    if (requireAal2) {
+                        authorize.requestMatchers("/api/v1/patients/**")
+                                .hasAuthority(AAL2_AUTHORITY);
+                    }
+                    authorize.anyRequest().authenticated();
+                })
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
                         jwt.jwtAuthenticationConverter(supabaseJwtAuthenticationConverter)))
                 .build();
