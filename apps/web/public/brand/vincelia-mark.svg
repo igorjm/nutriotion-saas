@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Vincelia</title>
+  <desc id="desc">Dois caminhos formam um V e seguem em movimento.</desc>
   <rect width="128" height="128" rx="34" fill="#173f3b"/>
   <path d="M25 27c11 17 18 34 28 55 4 9 8 16 12 22" fill="none" stroke="#dfeee9" stroke-width="15" stroke-linecap="round"/>
   <path d="M103 23C90 43 83 61 73 82c-4 9-8 16-12 23" fill="none" stroke="#e99763" stroke-width="15" stroke-linecap="round"/>

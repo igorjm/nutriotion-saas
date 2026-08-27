@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@nutrition-platform/api-client": "file:../../packages/api-client",
+    "@nutrition-platform/brand": "file:../../packages/brand",
     "@supabase/ssr": "0.12.5",
     "@supabase/supabase-js": "2.112.4",
     "lucide-react": "^0.468.0",

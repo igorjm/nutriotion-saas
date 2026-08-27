@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2, KeyRound, LockKeyhole, MailCheck, ShieldCheck, UserRound } from "lucide-react";
+import { BrandLockup } from "@/components/brand-lockup";
 import { getPatientInvitationPreview } from "@/lib/api/server";
 import { createClient } from "@/lib/supabase/server";
 import { acceptInvitation, createInvitedPatientAccount, signOutFromInvitation } from "./actions";
@@ -45,7 +46,7 @@ export default async function PatientInvitationPage({ params, searchParams }: In
   return (
     <main className="invitation-page">
       <section className="invitation-intro">
-        <Link className="brand inverted" href="/"><span className="brand-mark" /><strong>[PRODUCT_NAME]</strong></Link>
+        <BrandLockup className="inverted" showPromise />
         <div>
           <span className="eyebrow">Convite para acompanhamento</span>
           <h1>{preview.organizationName} convidou você.</h1>

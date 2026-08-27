@@ -31,7 +31,11 @@ h1, h2, h3, p { margin: 0; }
 .button.secondary { color: var(--green-900); border-color: #bfd0cb; background: #fff; }
 .eyebrow { color: var(--green-700); font-size: 11px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
 .brand { display: inline-flex; align-items: center; gap: 10px; }
-.brand-mark { width: 30px; height: 30px; display: inline-block; border-radius: 11px 11px 11px 4px; background: var(--coral); transform: rotate(-4deg); box-shadow: inset -7px -7px 0 rgba(255,255,255,.17); }
+.brand-mark { width: 34px; height: 34px; display: inline-block; flex: 0 0 auto; background: url("/brand/vincelia-mark.svg") center / contain no-repeat; }
+.brand-copy { display: grid; gap: 1px; }
+.brand-copy strong { font-size: 15px; letter-spacing: -.025em; }
+.brand-copy small { color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .02em; }
+.brand.inverted .brand-copy small { color: #9fbbb2; }
 
 .marketing-shell { min-height: 100vh; overflow: hidden; }
 .marketing-header { height: 74px; padding: 0 max(24px, calc((100vw - 1180px) / 2)); display: flex; align-items: center; gap: 44px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.92); position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); }
@@ -82,6 +86,13 @@ h1, h2, h3, p { margin: 0; }
 .benefit-grid article > span { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 12px; color: var(--green-700); background: var(--green-100); }
 .benefit-grid h3 { margin-top: 24px; font-size: 18px; }
 .benefit-grid p { margin-top: 10px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+
+.continuity-section { padding: 90px max(24px, calc((100vw - 1180px) / 2)); display: grid; grid-template-columns: .8fr 1.2fr; gap: 74px; align-items: center; background: var(--canvas); }
+.continuity-section h2 { max-width: 580px; margin-top: 13px; font-size: clamp(34px, 4vw, 49px); line-height: 1.08; letter-spacing: -.045em; }
+.continuity-section p { max-width: 590px; margin-top: 20px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.continuity-signature { margin-top: 25px; display: inline-flex; padding: 8px 11px; border: 1px solid #bfd0cb; border-radius: 999px; color: var(--green-700); background: rgba(255,255,255,.62); font-size: 10px; font-weight: 800; }
+.continuity-artwork { margin: 0; overflow: hidden; border: 1px solid rgba(23,63,59,.1); border-radius: 24px; background: #f0ece3; box-shadow: 0 24px 60px rgba(23,63,59,.12); }
+.continuity-artwork img { width: 100%; height: auto; display: block; }
 
 .safety-section { padding: 110px max(24px, calc((100vw - 1180px) / 2)); display: grid; grid-template-columns: 1fr .85fr; gap: 100px; align-items: center; color: #fff; background: var(--green-900); }
 .safety-section .eyebrow { color: #efb58a; }
@@ -254,6 +265,7 @@ h1, h2, h3, p { margin: 0; }
 
 .patient-welcome-page { min-height: 100vh; padding: 24px; display: grid; place-items: center; background: radial-gradient(circle at 50% 10%, var(--green-100), transparent 36%), var(--canvas); }
 .patient-welcome-card { width: min(590px, 100%); padding: 44px; text-align: center; border: 1px solid var(--line); border-radius: 20px; background: #fff; box-shadow: var(--shadow); }
+.patient-welcome-card > .brand { margin: 0 auto 28px; text-align: left; }
 .welcome-check { width: 58px; height: 58px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 18px; color: var(--green-700); background: var(--green-100); }
 .welcome-check svg { width: 29px; height: 29px; }
 .patient-welcome-card h1 { margin-top: 8px; font-size: 34px; letter-spacing: -.045em; }
@@ -271,16 +283,16 @@ h1, h2, h3, p { margin: 0; }
 .state-icon { width: 42px; height: 42px; margin-bottom: 16px; color: var(--green-700); }
 
 @media (max-width: 980px) {
-  .hero, .safety-section, .access-section { grid-template-columns: 1fr; }
+  .hero, .continuity-section, .safety-section, .access-section { grid-template-columns: 1fr; }
   .hero { gap: 55px; }
   .hero-copy { max-width: 700px; }
   .product-preview { max-width: 720px; }
   .benefit-grid, .foundation-grid { grid-template-columns: 1fr; }
-  .safety-section, .access-section { gap: 50px; }
+  .continuity-section, .safety-section, .access-section { gap: 50px; }
   .access-section { grid-template-columns: minmax(0, 700px); }
   .professional-shell { grid-template-columns: 80px 1fr; }
   .professional-sidebar { padding-inline: 12px; }
-  .professional-sidebar .brand strong, .professional-sidebar nav a { font-size: 0; }
+  .professional-sidebar .brand-copy, .professional-sidebar nav a { font-size: 0; }
   .professional-sidebar nav a { justify-content: center; }
   .security-note { display: none; }
   .patients-layout { grid-template-columns: 1fr; }
@@ -293,7 +305,7 @@ h1, h2, h3, p { margin: 0; }
   .marketing-header { height: 66px; padding-inline: 15px; }
   .marketing-header nav { display: none; }
   .marketing-header .button { margin-left: auto; min-height: 36px; padding-inline: 11px; }
-  .hero, .benefits-section, .safety-section, .access-section { padding: 70px 18px; }
+  .hero, .benefits-section, .continuity-section, .safety-section, .access-section { padding: 70px 18px; }
   .hero { min-height: auto; }
   .hero h1 { font-size: 44px; }
   .hero-actions { align-items: stretch; flex-direction: column; }
@@ -310,7 +322,9 @@ h1, h2, h3, p { margin: 0; }
   .professional-shell { display: block; }
   .professional-sidebar { min-height: 64px; padding: 10px 15px; flex-direction: row; align-items: center; }
   .professional-sidebar nav, .security-note { display: none; }
+  .professional-sidebar .brand-copy { display: grid; }
   .professional-sidebar .brand strong { font-size: 13px; }
+  .professional-sidebar .brand small { display: none; }
   .professional-content { padding: 24px 15px; }
   .professional-content > header { align-items: flex-start; gap: 14px; flex-direction: column; }
   .professional-actions { width: 100%; justify-content: space-between; }
