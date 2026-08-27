@@ -1,0 +1,28 @@
+spring:
+  config:
+    activate:
+      on-profile: local-auth
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://127.0.0.1:54322/postgres}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:54321/auth/v1
+          jwk-set-uri: ${OIDC_JWK_SET_URI:http://127.0.0.1:54321/auth/v1/.well-known/jwks.json}
+
+app:
+  security:
+    jws-algorithm: ES256
+  local-auth:
+    seed-email: ${LOCAL_AUTH_EMAIL:mariana.local@example.invalid}
+
+server:
+  port: ${PORT:8081}
+
+logging:
+  level:
+    root: INFO
+    br.com.nutritionplatform: INFO

@@ -1,6 +1,7 @@
 package br.com.nutritionplatform.platform.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,6 +29,31 @@ class JwtSecurityConfigurationTest {
         assertThat(aal1.getAuthorities()).extracting("authority").doesNotContain("AAL2");
         assertThat(aal2).isNotNull();
         assertThat(aal2.getAuthorities()).extracting("authority").contains("AAL2");
+    }
+
+    @Test
+    void requiresAnExplicitAlgorithmForAnOverriddenJwkSet() {
+        var configuration = new JwtSecurityConfiguration();
+
+        assertThatThrownBy(() -> configuration.jwtDecoder(
+                        "https://issuer.example.invalid",
+                        "https://keys.example.invalid/jwks.json",
+                        "",
+                        "authenticated"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("jws-algorithm");
+    }
+
+    @Test
+    void buildsAnEs256DecoderForTheLocalJwkSet() {
+        var configuration = new JwtSecurityConfiguration();
+
+        assertThat(configuration.jwtDecoder(
+                        "http://127.0.0.1:54321/auth/v1",
+                        "http://host.docker.internal:54321/auth/v1/.well-known/jwks.json",
+                        "ES256",
+                        "authenticated"))
+                .isNotNull();
     }
 
     private Jwt jwt(List<String> audience, String assuranceLevel) {
