@@ -26,6 +26,11 @@ public class PatientInvitationService {
     private static final Duration INVITATION_LIFETIME = Duration.ofDays(7);
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String CONSENT_PURPOSE = "CARE_RELATIONSHIP";
+    static final String CONSENT_TEXT_VERSION = "care-relationship-v1";
+    static final String CONSENT_TEXT = """
+            Ao aceitar, você permite que esta organização crie e mantenha seu registro de acompanhamento nutricional, acesse as informações que você decidir fornecer e entre em contato sobre este cuidado.
+
+            Este consentimento não inclui marketing, não autoriza decisões clínicas automáticas e poderá ser revisto ou retirado pelos canais de privacidade quando esse fluxo estiver disponível.""";
 
     private final JdbcClient jdbc;
     private final IdentityContextService identityContextService;
@@ -72,31 +77,40 @@ public class PatientInvitationService {
 
         expireOlderPendingInvitation(context.organizationId(), email);
 
-        UUID patientId = UUID.randomUUID();
+        UUID patientId = findPatientPersonId(email);
+        boolean newPatient = patientId == null;
+        if (newPatient) patientId = UUID.randomUUID();
         UUID relationshipId = UUID.randomUUID();
         UUID invitationId = UUID.randomUUID();
         String token = generateToken();
         Instant expiresAt = clock.instant().plus(INVITATION_LIFETIME);
 
-        jdbc.sql("""
-                INSERT INTO patient_person (id, display_name, care_focus)
-                VALUES (:id, :displayName, :careFocus)
-                """)
-                .param("id", patientId)
-                .param("displayName", displayName)
-                .param("careFocus", careFocus)
-                .update();
-        jdbc.sql("""
-                INSERT INTO care_relationship (
-                    id, organization_id, patient_person_id, status
-                ) VALUES (
-                    :id, :organizationId, :patientId, 'INVITED'
-                )
-                """)
-                .param("id", relationshipId)
-                .param("organizationId", context.organizationId())
-                .param("patientId", patientId)
-                .update();
+        if (newPatient) {
+            jdbc.sql("""
+                    INSERT INTO patient_person (id, display_name)
+                    VALUES (:id, :displayName)
+                    """)
+                    .param("id", patientId)
+                    .param("displayName", displayName)
+                    .update();
+        }
+        try {
+            jdbc.sql("""
+                    INSERT INTO care_relationship (
+                        id, organization_id, patient_person_id, status, care_focus
+                    ) VALUES (
+                        :id, :organizationId, :patientId, 'INVITED', :careFocus
+                    )
+                    """)
+                    .param("id", relationshipId)
+                    .param("organizationId", context.organizationId())
+                    .param("patientId", patientId)
+                    .param("careFocus", careFocus)
+                    .update();
+        } catch (DataIntegrityViolationException exception) {
+            throw new PatientInvitationConflictException(
+                    "A care relationship already exists for this patient in the organization.");
+        }
         try {
             jdbc.sql("""
                     INSERT INTO patient_invitation (
@@ -152,7 +166,9 @@ public class PatientInvitationService {
                 invitation.patientDisplayName(),
                 maskEmail(invitation.email()),
                 status,
-                invitation.expiresAt());
+                invitation.expiresAt(),
+                CONSENT_TEXT_VERSION,
+                CONSENT_TEXT);
     }
 
     @Transactional
@@ -166,6 +182,10 @@ public class PatientInvitationService {
 
         if (!invitation.email().equalsIgnoreCase(email)) {
             throw new PatientInvitationIdentityMismatchException();
+        }
+        if (!CONSENT_TEXT_VERSION.equals(request.consentTextVersion())) {
+            throw new PatientInvitationConflictException(
+                    "The consent text changed. Reload the invitation before accepting it.");
         }
         if ("ACCEPTED".equals(invitation.status())) {
             UUID acceptedUserId = findUserId(externalSubject, email);
@@ -188,19 +208,7 @@ public class PatientInvitationService {
                 invitation.patientDisplayName());
         Instant acceptedAt = clock.instant();
 
-        int linkedPatient = jdbc.sql("""
-                UPDATE patient_person
-                SET user_id = :userId
-                WHERE id = :patientId
-                  AND (user_id IS NULL OR user_id = :userId)
-                """)
-                .param("userId", userId)
-                .param("patientId", invitation.patientPersonId())
-                .update();
-        if (linkedPatient != 1) {
-            throw new PatientInvitationConflictException(
-                    "This patient record is already linked to another identity.");
-        }
+        UUID patientId = linkPatientIdentity(invitation, userId);
 
         int activatedRelationship = jdbc.sql("""
                 UPDATE care_relationship
@@ -210,7 +218,7 @@ public class PatientInvitationService {
                   AND status = 'INVITED'
                 """)
                 .param("organizationId", invitation.organizationId())
-                .param("patientId", invitation.patientPersonId())
+                .param("patientId", patientId)
                 .update();
         if (activatedRelationship != 1) {
             throw new PatientInvitationConflictException(
@@ -235,20 +243,22 @@ public class PatientInvitationService {
         jdbc.sql("""
                 INSERT INTO consent_record (
                     id, organization_id, patient_person_id, user_id, invitation_id,
-                    purpose, text_version, channel, accepted_at
+                    purpose, text_version, channel, accepted_at, text_snapshot
                 ) VALUES (
                     :id, :organizationId, :patientId, :userId, :invitationId,
-                    :purpose, :textVersion, 'WEB_INVITATION', :acceptedAt
+                    :purpose, :textVersion, 'WEB_INVITATION', :acceptedAt,
+                    :textSnapshot
                 )
                 """)
                 .param("id", UUID.randomUUID())
                 .param("organizationId", invitation.organizationId())
-                .param("patientId", invitation.patientPersonId())
+                .param("patientId", patientId)
                 .param("userId", userId)
                 .param("invitationId", invitation.id())
                 .param("purpose", CONSENT_PURPOSE)
-                .param("textVersion", request.consentTextVersion())
+                .param("textVersion", CONSENT_TEXT_VERSION)
                 .param("acceptedAt", OffsetDateTime.ofInstant(acceptedAt, ZoneOffset.UTC))
+                .param("textSnapshot", CONSENT_TEXT)
                 .update();
 
         auditService.record(
@@ -256,18 +266,96 @@ public class PatientInvitationService {
                 externalSubject,
                 "PATIENT_INVITATION_ACCEPTED",
                 "PATIENT_PERSON",
-                invitation.patientPersonId());
+                patientId);
         recordOutboxEvent(
                 invitation.organizationId(),
                 "CARE_RELATIONSHIP_ACTIVATED",
                 "PATIENT_PERSON",
-                invitation.patientPersonId(),
+                patientId,
                 "{\"invitationId\":\"" + invitation.id() + "\"}");
 
         return new PatientInvitationAcceptanceResponse(
-                invitation.patientPersonId(),
+                patientId,
                 "ACTIVE",
                 acceptedAt);
+    }
+
+    private UUID findPatientPersonId(String email) {
+        return jdbc.sql("""
+                SELECT p.id
+                FROM patient_person p
+                JOIN app_user u ON u.id = p.user_id
+                WHERE lower(u.email) = :email
+                """)
+                .param("email", email)
+                .query(UUID.class)
+                .optional()
+                .orElse(null);
+    }
+
+    private UUID linkPatientIdentity(InvitationRow invitation, UUID userId) {
+        UUID linkedPatientId = jdbc.sql("""
+                SELECT id
+                FROM patient_person
+                WHERE user_id = :userId
+                FOR UPDATE
+                """)
+                .param("userId", userId)
+                .query(UUID.class)
+                .optional()
+                .orElse(null);
+        if (linkedPatientId == null) {
+            int linkedPatient = jdbc.sql("""
+                    UPDATE patient_person
+                    SET user_id = :userId
+                    WHERE id = :patientId
+                      AND user_id IS NULL
+                    """)
+                    .param("userId", userId)
+                    .param("patientId", invitation.patientPersonId())
+                    .update();
+            if (linkedPatient != 1) {
+                throw new PatientInvitationConflictException(
+                        "This patient record is already linked to another identity.");
+            }
+            return invitation.patientPersonId();
+        }
+        if (linkedPatientId.equals(invitation.patientPersonId())) {
+            return linkedPatientId;
+        }
+
+        try {
+            int movedRelationship = jdbc.sql("""
+                    UPDATE care_relationship
+                    SET patient_person_id = :linkedPatientId
+                    WHERE organization_id = :organizationId
+                      AND patient_person_id = :invitedPatientId
+                      AND status = 'INVITED'
+                    """)
+                    .param("linkedPatientId", linkedPatientId)
+                    .param("organizationId", invitation.organizationId())
+                    .param("invitedPatientId", invitation.patientPersonId())
+                    .update();
+            if (movedRelationship != 1) {
+                throw new PatientInvitationConflictException(
+                        "The care relationship cannot be linked to this identity.");
+            }
+        } catch (DataIntegrityViolationException exception) {
+            throw new PatientInvitationConflictException(
+                    "A care relationship already exists for this patient in the organization.");
+        }
+        jdbc.sql("""
+                UPDATE patient_invitation
+                SET patient_person_id = :linkedPatientId
+                WHERE id = :invitationId
+                """)
+                .param("linkedPatientId", linkedPatientId)
+                .param("invitationId", invitation.id())
+                .update();
+        jdbc.sql("DELETE FROM patient_person WHERE id = :invitedPatientId AND user_id IS NULL")
+                .param("invitedPatientId", invitation.patientPersonId())
+                .update();
+        return linkedPatientId;
     }
 
     private void expireOlderPendingInvitation(UUID organizationId, String email) {

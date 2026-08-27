@@ -70,7 +70,7 @@ public class PatientQueryService {
                             LIMIT 1
                         )
                     ) AS contact_email,
-                    p.care_focus,
+                    cr.care_focus,
                     cr.status,
                     cr.created_at
                 FROM care_relationship cr

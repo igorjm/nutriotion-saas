@@ -74,7 +74,10 @@ export async function getPatientInvitationPreview(
   }
 }
 
-export async function acceptPatientInvitation(token: string, consentTextVersion: string) {
+export async function acceptPatientInvitation(
+  token: string,
+  consentTextVersion: "care-relationship-v1",
+) {
   const client = await getAuthenticatedClient();
   if (!client) return false;
   try {

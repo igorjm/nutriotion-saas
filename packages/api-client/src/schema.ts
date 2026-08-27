@@ -196,9 +196,13 @@ export interface components {
             status: "PENDING" | "ACCEPTED" | "REVOKED" | "EXPIRED";
             /** Format: date-time */
             expiresAt: string;
+            /** @enum {string} */
+            consentTextVersion: "care-relationship-v1";
+            consentText: string;
         };
         PatientInvitationAcceptanceRequest: {
-            consentTextVersion: string;
+            /** @enum {string} */
+            consentTextVersion: "care-relationship-v1";
         };
         PatientInvitationAcceptanceResponse: {
             /** Format: uuid */

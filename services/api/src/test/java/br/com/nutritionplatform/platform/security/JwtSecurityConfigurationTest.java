@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Instant;
 import java.util.List;
+import org.springframework.http.HttpMethod;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -29,6 +31,18 @@ class JwtSecurityConfigurationTest {
         assertThat(aal1.getAuthorities()).extracting("authority").doesNotContain("AAL2");
         assertThat(aal2).isNotNull();
         assertThat(aal2.getAuthorities()).extracting("authority").contains("AAL2");
+    }
+
+    @Test
+    void requiresAal2ForProfessionalPatientRoutesButNotPatientAcceptance() {
+        var matcher = JwtSecurityConfiguration.clinicalAal2Matcher();
+
+        assertThat(matcher.matches(request(HttpMethod.GET, "/api/v1/patients"))).isTrue();
+        assertThat(matcher.matches(request(HttpMethod.POST, "/api/v1/patient-invitations"))).isTrue();
+        assertThat(matcher.matches(request(
+                        HttpMethod.POST,
+                        "/api/v1/patient-invitations/fictional-token/accept")))
+                .isFalse();
     }
 
     @Test
@@ -66,5 +80,11 @@ class JwtSecurityConfigurationTest {
                 .issuedAt(issuedAt)
                 .expiresAt(issuedAt.plusSeconds(3600))
                 .build();
+    }
+
+    private MockHttpServletRequest request(HttpMethod method, String path) {
+        MockHttpServletRequest request = new MockHttpServletRequest(method.name(), path);
+        request.setServletPath(path);
+        return request;
     }
 }
