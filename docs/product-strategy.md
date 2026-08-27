@@ -1071,7 +1071,7 @@ If the plan builder or patient loop slips, cut in this order: public professiona
 | AI patient assistant       | Feature-flag controlled beta; approved plan only; no autonomous modifications                                                                                                         | Sprint 5 gate; can be cut without breaking core MVP                                                        |
 | Social-growth claims       | CFN-reviewed rule pack; no auto-post, fees/promotions, before-after, guarantees, or brand endorsements                                                                                | Before Sprint 6 pilot                                                                                      |
 | Data roles and retention   | Nutritionist controller / SaaS operator for care data; purpose-based separate controller roles                                                                                        | Counsel before real data                                                                                   |
-| Brand/name/domain          | Working recommendation: Vincelia; fallback: Ritmera. Finalize only after pronunciation/recall testing and INPI clearance.                                                             | Week 1 validation gate; register the Brazilian and international-path domains immediately after selection. |
+| Brand/name/domain          | Working recommendation: Vincelia. Ritmera was retired on 25 August 2026 after an exact-name collision screen. Finalize only after pronunciation/recall testing and INPI clearance.     | Week 1 validation gate; register the Brazilian and international-path domains immediately after selection. |
 
 <table>
 <colgroup>
@@ -1098,7 +1098,7 @@ If the plan builder or patient loop slips, cut in this order: public professiona
 <thead>
 <tr class="header">
 <th><p><strong>Conditional working decision</strong></p>
-<p>Proceed with Vincelia as the working masterbrand and retain Ritmera as the fallback. Do not commission a permanent logo or publicly announce either name until the founder test and trademark gate below are complete.</p></th>
+<p>Proceed with Vincelia as the working masterbrand. Ritmera is no longer the fallback after a 25 August 2026 collision screen found active exact-name use and existing trademark activity outside Brazil. Do not commission a permanent logo or publicly announce Vincelia until the founder test and trademark gate below are complete.</p></th>
 </tr>
 </thead>
 <tbody>
@@ -1109,8 +1109,8 @@ If the plan builder or patient loop slips, cut in this order: public professiona
 
 | **Candidate**          | **Strategic assessment**                                                                                                                                        | **Domain path and risk**                                                                                                                                                 |
 |------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Vincelia — recommended | Suggests vínculo, continuity, and professional–patient connection. Broad enough for clinical workflow, practice growth, patient engagement, and future clinics. | Observed with no RDAP registration record: vincelia.com.br, usevincelia.com, getvincelia.com. Exact .com is registered. Test pronunciation and spelling before purchase. |
-| Ritmera — fallback     | Suggests rhythm, routine, adherence, and a modern operating cadence. Stronger patient-habit story, but weaker immediate connection to professional practice.    | Observed with no RDAP registration record: ritmera.com.br, useritmera.com, getritmera.com. Requires a stricter dictation/spelling test.                                  |
+| Vincelia — recommended | Suggests vínculo, continuity, and professional–patient connection. Broad enough for clinical workflow, practice growth, patient engagement, and future clinics. | Rechecked 25 August 2026 with no RDAP registration record: vincelia.com.br, usevincelia.com, getvincelia.com. Exact .com is registered. Test pronunciation and spelling before purchase. |
+| Ritmera — retired      | Exact-name use now creates unnecessary collision risk and weakens search distinctiveness, even before a Brazil-specific legal analysis.                         | Active public calculator platform at [ritmera.ru](https://ritmera.ru/) and [exact-name trademark activity](https://www.trademarkelite.com/uk/trademark/trademark-detail/UK00916663346/Ritmera) associated with Daikin outside Brazil. Do not use as the default fallback. |
 
 **Why the masterbrand should not begin with Nutri-, Diet-, Care-, Clinic-, Vita-, Well-, or AI:**
 
@@ -1142,7 +1142,7 @@ If the plan builder or patient loop slips, cut in this order: public professiona
 | Nutritionist experience | Vincelia       | Role-adaptive workspace; no “Pro” sub-brand needed initially.                             |
 | Patient experience      | Vincelia       | Same app name; role and invitation determine the interface.                               |
 | Practice acquisition    | Growth         | Navigation module covering weekly planning, content, leads, and follow-ups.               |
-| AI assistance           | Copilot        | Contextual capability with visible draft/approval labels; never the primary destination.  |
+| AI assistance           | Assistência com IA | Contextual capability with visible draft/approval labels; never the primary destination. |
 | Organizations           | For Clinics    | Commercial edition only after staff, permissions, and multi-professional workflows exist. |
 
 ## **A.3 Domain and application topology**
@@ -1217,7 +1217,7 @@ The landing page should sell the switch outcome—safer migration, faster workfl
 
 ## **A.7 Decision gate before public commitment**
 
-- [ ] Blind-test Vincelia and Ritmera with the nutritionist co-founder plus at least five external nutritionists: pronunciation, dictation, 24-hour recall, associations, and trust.
+- [ ] Blind-test Vincelia with the nutritionist co-founder plus at least five external nutritionists: pronunciation, dictation, 24-hour recall, associations, and trust.
 
 - [ ] Reject any candidate that fewer than 80% can write correctly after hearing once, or that creates repeated supplement, clinic, or AI-diet associations.
 
