@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Activity, ArrowRight, Building2, CheckCircle2, ShieldCheck, UserPlus, Users } from "lucide-react";
+import { Activity, ArrowRight, Building2, CheckCircle2, ShieldCheck, UserPlus } from "lucide-react";
 import { getSessionContext } from "@/lib/api/server";
 import { signOut } from "@/app/auth/login/actions";
+import { ProfessionalSidebar } from "@/components/professional-sidebar";
 
 export const dynamic = "force-dynamic";
 
@@ -10,17 +11,10 @@ export default async function ProfessionalHome() {
 
   return (
     <main className="professional-shell">
-      <aside className="professional-sidebar">
-        <Link className="brand inverted" href="/"><span className="brand-mark" /><strong>[PRODUCT_NAME]</strong></Link>
-        <nav aria-label="Navegação profissional">
-          <span className="active"><Activity /> Fundação</span>
-          <span><Users /> Pacientes</span>
-        </nav>
-        <div className="security-note"><ShieldCheck /><span>Ambiente de fundação<br /><small>Sem dados clínicos reais</small></span></div>
-      </aside>
+      <ProfessionalSidebar active="foundation" />
       <section className="professional-content">
         <header>
-          <div><span className="eyebrow">Sprint 0</span><h1>Fundação da prática</h1></div>
+          <div><span className="eyebrow">Sprint 1</span><h1>Fundação da prática</h1></div>
           <div className="professional-actions">
             <span className="environment-badge">STAGING · DADOS FICTÍCIOS</span>
             <form action={signOut}><button className="text-button" type="submit">Sair</button></form>
@@ -60,9 +54,10 @@ export default async function ProfessionalHome() {
           </article>
           <article>
             <span><UserPlus /></span>
-            <small>Próxima fatia vertical</small>
-            <h3>Convite e vínculo com o paciente</h3>
-            <p>Convite, consentimento e relacionamento serão entregues juntos, com auditoria e testes negativos.</p>
+            <small>Fatia vertical disponível</small>
+            <h3>Convide um paciente fictício</h3>
+            <p>Teste convite, criação da conta do paciente, consentimento e ativação do vínculo.</p>
+            <Link className="text-link card-link" href="/professional/patients">Abrir pacientes <ArrowRight size={15} /></Link>
           </article>
           <article>
             <span><Activity /></span>
