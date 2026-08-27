@@ -18,7 +18,7 @@ Clinical continuity, patient adherence, and professional growth in one focused p
 </div>
 
 > [!IMPORTANT]
-> This repository is in Sprint 0. The prototype uses fictional, hardcoded data. Do not use real patient data, clinical records, secrets, or production identifiers in development, tests, screenshots, or issues.
+> The Sprint 0 engineering foundation is complete, while founder-led discovery gates remain open. The first Sprint 1 vertical slice is in development. The deployed prototype remains a fictional, hardcoded UX reference. Do not use real patient data, clinical records, secrets, or production identifiers in development, tests, screenshots, or issues.
 
 ## The product thesis
 
@@ -39,10 +39,10 @@ AI remains assistive throughout: it prepares drafts and summaries, while the nut
 | Surface | Status | Purpose |
 | --- | --- | --- |
 | Interactive prototype | Available | Validates professional, patient, mobile, and acquisition workflows |
-| Production public web | Sprint 0 foundation | Positioning and consent-aware early-access capture |
-| Professional web | Sprint 0 foundation | Authenticated, Organization-scoped application shell |
-| Modular API | Sprint 0 foundation | Identity, tenancy, audit, outbox, and patient relationship boundaries |
-| Patient PWA | Planned | Responsive MVP experience after the relationship vertical slice |
+| Production public web | Foundation available | Positioning and consent-aware early-access capture |
+| Professional web | Sprint 1 in development | Organization-scoped patient list and invitation flow |
+| Modular API | Sprint 1 in development | Invitation, versioned consent, active relationship, audit, and outbox |
+| Patient PWA | First entry flow available | Account, consent, and relationship confirmation; daily experience remains planned |
 
 ## Architecture
 
@@ -142,8 +142,9 @@ CI treats authorization and tenant isolation as release blockers. Database chang
 
 - [x] Product strategy and high-fidelity workflow prototype
 - [x] Production repository, CI, OpenAPI client, PostgreSQL, tenancy, audit, and threat-model foundations
-- [ ] OIDC provider selection and staging deployment
-- [ ] Professional onboarding → patient invitation → consent → accepted relationship
+- [x] Supabase Auth selection, local development, and fictional-data staging foundation
+- [x] Professional invitation → patient account → consent → accepted relationship
+- [ ] Self-service professional onboarding and Organization creation
 - [ ] Consultation and assessment records
 - [ ] Nutrition-plan drafting, versioning, and publication
 - [ ] Patient plan and adherence PWA
