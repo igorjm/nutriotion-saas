@@ -2,7 +2,7 @@
 
 ## Status at handoff
 
-The product strategy and interactive prototype are complete. A production Sprint 0 foundation now exists alongside the unchanged prototype; it is ready for clean-checkout CI, provider selection, staging deployment, and structured discovery. `docs/brand-interface-foundation.md` now defines Vincelia as the conditional working masterbrand and translates the product strategy into an implementation-ready interface layout.
+The product strategy and interactive prototype are complete. The Sprint 0 engineering foundation is complete alongside the unchanged prototype, while founder-led discovery and pilot-recruitment gates remain open. The first Sprint 1 vertical slice now covers professional invitation, patient account matching, versioned consent, relationship activation, and the Organization-scoped patient list. `docs/brand-interface-foundation.md` defines Vincelia as the conditional working masterbrand; the final product name and domain remain a separate founder decision gate.
 
 Production foundation added on 2026-08-19:
 
@@ -11,6 +11,14 @@ Production foundation added on 2026-08-19:
 - `contracts/openapi` and `packages/api-client`: versioned OpenAPI contract and generated TypeScript client.
 - `infra`: local PostgreSQL plus a portable Fly.io deployment template.
 - `docs/adr`, `docs/security`, `docs/runbooks`, and `docs/sprint-0-execution-plan.md`: decisions, threat controls, operations, and the two-week execution gate.
+
+First Sprint 1 slice added on 2026-08-27:
+
+- One-time patient invitations store only a SHA-256 token hash and expire after seven days.
+- The accepting Auth identity must match the normalized invited email.
+- Consent is immutable, versioned, and committed atomically with relationship activation, audit, and outbox records.
+- Patient reads resolve the Organization from authenticated membership and are covered by tenant-isolation integration tests.
+- The production web exposes the professional patient list, invitation form, patient account entry, consent review, and relationship confirmation in pt-BR.
 
 The prototype currently demonstrates:
 
@@ -59,7 +67,7 @@ Do not rewrite the prototype into a full system in one pass.
 2. Extract design tokens and reusable UI primitives.
 3. Scaffold the Java modular monolith and PostgreSQL development environment.
 4. Implement authentication, Organization membership, RBAC, and audit foundations.
-5. Deliver the first vertical slice: nutritionist onboarding → patient invitation → consent → patient record.
+5. Deliver the first vertical slice: nutritionist onboarding → patient invitation → consent → patient record. **In progress:** invitation through accepted relationship is implemented; self-service professional onboarding and the clinical patient record remain.
 6. Add assessment/consultation records.
 7. Add nutrition-plan drafting, versioning, and publication.
 8. Add the patient plan/adherence PWA experience.
@@ -75,14 +83,14 @@ Do not rewrite the prototype into a full system in one pass.
 - Validate the landing-page promise and early-access call to action.
 - Define the smallest migration/import path needed for a WebDiet user to switch.
 
-### Engineering track — Sprint 0
+### Engineering track — remaining Sprint 1 gates
 
-- Decide repository layout for `web`, `api`, and shared OpenAPI artifacts.
-- Establish local PostgreSQL, migrations, automated checks, and secrets handling.
-- Create the first ADRs and initial domain module boundaries.
-- Implement CI with lint, unit tests, integration tests, migration validation, and build.
-- Deploy a skeleton environment early, with health checks and observability.
-- Produce a threat model focused on tenancy, health data, files, invitations, and audit logs.
+- Add self-service professional signup, profile completion, and Organization creation.
+- Complete the professional TOTP enrollment and recovery flow before enabling clinical staging access.
+- Add switching-oriented CSV mapping, validation, dry-run, and reversible import for fictional data.
+- Add private document-archive upload metadata and signed object-storage access.
+- Instrument onboarding and invitation conversion without placing personal or clinical data in telemetry.
+- Exercise staging deployment, database restoration, tenant isolation, and invitation abuse controls before any pilot data.
 
 ## Suggested first production vertical slice
 

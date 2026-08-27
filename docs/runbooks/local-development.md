@@ -63,4 +63,15 @@ These credentials are deliberately public and fictional. The bootstrap script re
 
 Sign in at `http://localhost:3000/auth/login`, then confirm `/professional` shows Mariana Costa and Consultório Mariana Costa. This proves that the browser session, JWT signature/issuer/audience checks, and server-resolved Organization membership all agree.
 
+### Exercise the Sprint 1 relationship flow
+
+1. Open `http://localhost:3000/professional/patients` as Mariana.
+2. Create an invitation using only an invented name and an address ending in `.invalid`.
+3. Open the generated invitation in a private browser window so it does not reuse the professional session.
+4. Create the patient account with a local-only password. If confirmation is requested, open Mailpit at `http://localhost:54324` and follow the local confirmation link.
+5. Return to the invitation, review the versioned consent, and activate the relationship.
+6. Sign back in as Mariana and confirm the patient appears as `Ativo` in the Organization-scoped list.
+
+The raw invitation token is returned once to the professional web and only its SHA-256 hash is persisted. Do not paste invitation links into issues, commits, screenshots, or shared logs even when they contain fictional data.
+
 Run `scripts/check-production.sh` before opening a pull request.
