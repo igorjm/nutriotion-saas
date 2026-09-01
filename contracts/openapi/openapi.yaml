@@ -10,6 +10,7 @@ tags:
   - name: Acquisition
   - name: Identity
   - name: Patients
+  - name: Clinical Records
   - name: Patient Invitations
 paths:
   /api/v1/public/early-access:
@@ -96,6 +97,171 @@ paths:
         '401':
           $ref: '#/components/responses/Problem'
         '403':
+          $ref: '#/components/responses/Problem'
+  /api/v1/patients/{patientId}/clinical-record:
+    get:
+      tags: [Clinical Records]
+      operationId: getPatientClinicalRecord
+      summary: Return the active Organization-scoped Patient 360 clinical record
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PatientId'
+      responses:
+        '200':
+          description: Patient record with intake and latest consultation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientClinicalRecord'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /api/v1/patients/{patientId}/intake:
+    put:
+      tags: [Clinical Records]
+      operationId: updatePatientIntake
+      summary: Create or update the active care relationship intake record
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PatientId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePatientIntakeRequest'
+      responses:
+        '200':
+          description: Updated intake record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientIntakeRecord'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /api/v1/patients/{patientId}/consultations:
+    post:
+      tags: [Clinical Records]
+      operationId: startPatientConsultation
+      summary: Start or return the current in-progress consultation
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PatientId'
+      responses:
+        '201':
+          description: Consultation workspace started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationWorkspace'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /api/v1/patients/{patientId}/consultations/{consultationId}/note:
+    put:
+      tags: [Clinical Records]
+      operationId: saveClinicalNoteDraft
+      summary: Autosave the mutable draft of a consultation note
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PatientId'
+        - $ref: '#/components/parameters/ConsultationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClinicalNoteRequest'
+      responses:
+        '200':
+          description: Autosaved consultation workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationWorkspace'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+  /api/v1/patients/{patientId}/consultations/{consultationId}/finalize:
+    post:
+      tags: [Clinical Records]
+      operationId: finalizeClinicalNote
+      summary: Finalize the current draft as an immutable clinical note version
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PatientId'
+        - $ref: '#/components/parameters/ConsultationId'
+      responses:
+        '200':
+          description: Finalized consultation workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationWorkspace'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+  /api/v1/patients/{patientId}/consultations/{consultationId}/amendments:
+    post:
+      tags: [Clinical Records]
+      operationId: startClinicalNoteAmendment
+      summary: Create a new draft version linked to a finalized note
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PatientId'
+        - $ref: '#/components/parameters/ConsultationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAmendmentRequest'
+      responses:
+        '201':
+          description: Amendment draft created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationWorkspace'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
           $ref: '#/components/responses/Problem'
   /api/v1/patient-invitations:
     post:
@@ -186,6 +352,21 @@ paths:
         '409':
           $ref: '#/components/responses/Problem'
 components:
+  parameters:
+    PatientId:
+      name: patientId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ConsultationId:
+      name: consultationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http
@@ -284,6 +465,148 @@ components:
         relationshipCreatedAt:
           type: string
           format: date-time
+    PatientClinicalRecord:
+      type: object
+      additionalProperties: false
+      required: [patientId, displayName, contactEmail, careFocus, relationshipStatus, intake, consultation]
+      properties:
+        patientId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+        contactEmail:
+          type: [string, 'null']
+          format: email
+        careFocus:
+          type: [string, 'null']
+        relationshipStatus:
+          type: string
+          enum: [ACTIVE]
+        intake:
+          oneOf:
+            - $ref: '#/components/schemas/PatientIntakeRecord'
+            - type: 'null'
+        consultation:
+          oneOf:
+            - $ref: '#/components/schemas/ConsultationWorkspace'
+            - type: 'null'
+    PatientIntakeRecord:
+      type: object
+      additionalProperties: false
+      required: [allergies, foodRestrictions, clinicalHistory, routineNotes, careGoal, version, updatedAt]
+      properties:
+        allergies:
+          type: string
+        foodRestrictions:
+          type: string
+        clinicalHistory:
+          type: string
+        routineNotes:
+          type: string
+        careGoal:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        updatedAt:
+          type: string
+          format: date-time
+    UpdatePatientIntakeRequest:
+      type: object
+      additionalProperties: false
+      required: [allergies, foodRestrictions, clinicalHistory, routineNotes, careGoal]
+      properties:
+        allergies:
+          type: string
+          maxLength: 2000
+        foodRestrictions:
+          type: string
+          maxLength: 2000
+        clinicalHistory:
+          type: string
+          maxLength: 5000
+        routineNotes:
+          type: string
+          maxLength: 5000
+        careGoal:
+          type: string
+          maxLength: 2000
+    ConsultationWorkspace:
+      type: object
+      additionalProperties: false
+      required: [id, status, createdAt, finalizedAt, note]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [IN_PROGRESS, FINALIZED]
+        createdAt:
+          type: string
+          format: date-time
+        finalizedAt:
+          type: [string, 'null']
+          format: date-time
+        note:
+          $ref: '#/components/schemas/ClinicalNoteRecord'
+    ClinicalNoteRecord:
+      type: object
+      additionalProperties: false
+      required: [id, version, status, subjective, objective, assessment, agreedActions, amendmentReason, updatedAt, finalizedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+        status:
+          type: string
+          enum: [DRAFT, FINALIZED]
+        subjective:
+          type: string
+        objective:
+          type: string
+        assessment:
+          type: string
+        agreedActions:
+          type: string
+        amendmentReason:
+          type: [string, 'null']
+        updatedAt:
+          type: string
+          format: date-time
+        finalizedAt:
+          type: [string, 'null']
+          format: date-time
+    UpdateClinicalNoteRequest:
+      type: object
+      additionalProperties: false
+      required: [subjective, objective, assessment, agreedActions]
+      properties:
+        subjective:
+          type: string
+          maxLength: 10000
+        objective:
+          type: string
+          maxLength: 10000
+        assessment:
+          type: string
+          maxLength: 10000
+        agreedActions:
+          type: string
+          maxLength: 10000
+    CreateAmendmentRequest:
+      type: object
+      additionalProperties: false
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
     CreatePatientInvitationRequest:
       type: object
       additionalProperties: false
