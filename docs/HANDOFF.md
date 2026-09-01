@@ -2,7 +2,7 @@
 
 ## Status at handoff
 
-The product strategy and interactive prototype are complete. The Sprint 0 engineering foundation is complete alongside the unchanged prototype, while founder-led discovery and pilot-recruitment gates remain open. The first Sprint 1 vertical slice now covers professional invitation, patient account matching, versioned consent, relationship activation, and the Organization-scoped patient list. `docs/brand-interface-foundation.md` defines Vincelia as the conditional working masterbrand; the final product name and domain remain a separate founder decision gate.
+The product strategy and interactive prototype are complete. The Sprint 0 engineering foundation is complete alongside the unchanged prototype, while founder-led discovery and pilot-recruitment gates remain open. The first Sprint 1 vertical slice covers professional invitation, patient account matching, versioned consent, relationship activation, and the Organization-scoped patient list. The first Sprint 2 vertical slice adds a Patient 360 workspace, structured intake, consultation notes with ordered autosave, immutable finalization, and linked amendments. `docs/brand-interface-foundation.md` defines Vincelia as the conditional working masterbrand; the final product name and domain remain a separate founder decision gate.
 
 Production foundation added on 2026-08-19:
 
@@ -19,6 +19,15 @@ First Sprint 1 slice added on 2026-08-27:
 - Consent is immutable, versioned, and committed atomically with relationship activation, audit, and outbox records.
 - Patient reads resolve the Organization from authenticated membership and are covered by tenant-isolation integration tests.
 - The production web exposes the professional patient list, invitation form, patient account entry, consent review, and relationship confirmation in pt-BR.
+
+First Sprint 2 slice added on 2026-09-01:
+
+- Active patients open into an Organization-scoped Patient 360 workspace with identity, contact, care focus, structured intake, and the latest consultation.
+- Clinical note drafts use typed sections and ordered, debounced autosave so newer edits cannot be overwritten by slower requests.
+- Finalization is blocked for empty notes and makes the persisted note version immutable at the database layer.
+- Corrections create a new draft linked to the previous finalized version with a mandatory reason; the prior content remains unchanged.
+- Intake updates, record reads, consultation starts, note finalizations, and amendment starts are auditable; material consultation events also enter the transactional outbox.
+- Integration tests cover tenant isolation, refresh persistence, empty-note protection, final-note immutability, and amendment history.
 
 The prototype currently demonstrates:
 
@@ -67,8 +76,8 @@ Do not rewrite the prototype into a full system in one pass.
 2. Extract design tokens and reusable UI primitives.
 3. Scaffold the Java modular monolith and PostgreSQL development environment.
 4. Implement authentication, Organization membership, RBAC, and audit foundations.
-5. Deliver the first vertical slice: nutritionist onboarding → patient invitation → consent → patient record. **In progress:** invitation through accepted relationship is implemented; self-service professional onboarding and the clinical patient record remain.
-6. Add assessment/consultation records.
+5. Deliver the first vertical slice: nutritionist onboarding → patient invitation → consent → patient record. **In progress:** invitation through accepted relationship and the first clinical record workspace are implemented; self-service professional onboarding remains.
+6. Add assessment/consultation records. **In progress:** structured intake and versioned consultation notes are implemented; measurements, progress media metadata, and the broader assessment model remain.
 7. Add nutrition-plan drafting, versioning, and publication.
 8. Add the patient plan/adherence PWA experience.
 9. Add only the first low-risk AI workflows after the underlying records and audit trail exist.
@@ -83,12 +92,14 @@ Do not rewrite the prototype into a full system in one pass.
 - Validate the landing-page promise and early-access call to action.
 - Define the smallest migration/import path needed for a WebDiet user to switch.
 
-### Engineering track — remaining Sprint 1 gates
+### Engineering track — remaining Sprint 1 gates and next Sprint 2 slice
 
 - Add self-service professional signup, profile completion, and Organization creation.
 - Complete the professional TOTP enrollment and recovery flow before enabling clinical staging access.
 - Add switching-oriented CSV mapping, validation, dry-run, and reversible import for fictional data.
 - Add private document-archive upload metadata and signed object-storage access.
+- Add typed measurements and private progress-photo metadata to Patient 360.
+- Validate the intake and consultation field set with the nutritionist co-founder before expanding it.
 - Instrument onboarding and invitation conversion without placing personal or clinical data in telemetry.
 - Exercise staging deployment, database restoration, tenant isolation, and invitation abuse controls before any pilot data.
 

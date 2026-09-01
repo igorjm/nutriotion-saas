@@ -74,4 +74,15 @@ Sign in at `http://localhost:3000/auth/login`, then confirm `/professional` show
 
 The raw invitation token is returned once to the professional web and only its SHA-256 hash is persisted. Do not paste invitation links into issues, commits, screenshots, or shared logs even when they contain fictional data.
 
+### Exercise the Sprint 2 clinical-record flow
+
+1. Open an active fictional patient from `http://localhost:3000/professional/patients`.
+2. Complete part of the structured intake and save it explicitly.
+3. Start a consultation and type into more than one clinical-note section.
+4. Wait for the `Salvo em ...` status, refresh the page, and confirm the content remains.
+5. Finalize the record only after adding clinical content. Confirm the fields become read-only.
+6. Enter a reason with at least five characters, create a rectification, and confirm it opens as a new draft version while the former finalized version remains immutable in PostgreSQL.
+
+Only use invented clinical content locally. The current slice intentionally defers measurements and private progress-photo metadata to the next Sprint 2 increment.
+
 Run `scripts/check-production.sh` before opening a pull request.
