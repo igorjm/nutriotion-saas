@@ -21,6 +21,8 @@ class OpenApiCoverageIntegrationTest extends PostgresIntegrationTest {
                 .andExpect(content().string(containsString("/api/v1/public/early-access")))
                 .andExpect(content().string(containsString("/api/v1/me/context")))
                 .andExpect(content().string(containsString("/api/v1/patients/{patientId}")))
+                .andExpect(content().string(containsString("/api/v1/patients/{patientId}/clinical-record")))
+                .andExpect(content().string(containsString("/api/v1/patients/{patientId}/consultations")))
                 .andExpect(content().string(containsString("/api/v1/patient-invitations")))
                 .andExpect(content().string(containsString("/api/v1/public/patient-invitations/{token}")));
     }

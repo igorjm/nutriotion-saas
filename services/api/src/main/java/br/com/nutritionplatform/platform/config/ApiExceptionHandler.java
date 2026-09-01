@@ -1,5 +1,8 @@
 package br.com.nutritionplatform.platform.config;
 
+import br.com.nutritionplatform.clinical.ClinicalPatientNotFoundException;
+import br.com.nutritionplatform.clinical.ClinicalRecordConflictException;
+import br.com.nutritionplatform.clinical.ConsultationNotFoundException;
 import br.com.nutritionplatform.identity.MembershipNotFoundException;
 import br.com.nutritionplatform.patient.PatientNotFoundException;
 import br.com.nutritionplatform.patient.PatientInvitationConflictException;
@@ -32,6 +35,31 @@ class ApiExceptionHandler {
                 "The patient does not exist or is not accessible in the active organization.");
         problem.setType(URI.create("https://errors.product.invalid/patient-not-found"));
         problem.setTitle("Patient not found");
+        return problem;
+    }
+
+    @ExceptionHandler(ClinicalPatientNotFoundException.class)
+    ProblemDetail clinicalPatientNotFound() {
+        return patientNotFound();
+    }
+
+    @ExceptionHandler(ConsultationNotFoundException.class)
+    ProblemDetail consultationNotFound() {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                "The consultation does not exist or is not accessible in the active organization.");
+        problem.setType(URI.create("https://errors.product.invalid/consultation-not-found"));
+        problem.setTitle("Consultation not found");
+        return problem;
+    }
+
+    @ExceptionHandler(ClinicalRecordConflictException.class)
+    ProblemDetail clinicalRecordConflict(ClinicalRecordConflictException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                exception.getMessage());
+        problem.setType(URI.create("https://errors.product.invalid/clinical-record-conflict"));
+        problem.setTitle("Clinical record conflict");
         return problem;
     }
 
