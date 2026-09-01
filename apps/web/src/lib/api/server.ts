@@ -2,11 +2,16 @@ import "server-only";
 
 import {
   createApiClient,
+  type ConsultationWorkspace,
+  type CreateAmendmentRequest,
   type CreatePatientInvitationRequest,
+  type PatientClinicalRecord,
   type PatientInvitationCreated,
   type PatientInvitationPreview,
   type PatientListItem,
   type SessionContext,
+  type UpdateClinicalNoteRequest,
+  type UpdatePatientIntakeRequest,
 } from "@nutrition-platform/api-client";
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 
@@ -41,6 +46,112 @@ export async function getPatients(): Promise<PatientListItem[] | null> {
   if (!client) return null;
   try {
     const { data, error } = await client.GET("/api/v1/patients");
+    return error || !data ? null : data;
+  } catch {
+    return null;
+  }
+}
+
+export async function getPatientClinicalRecord(
+  patientId: string,
+): Promise<PatientClinicalRecord | null> {
+  const client = await getAuthenticatedClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client.GET("/api/v1/patients/{patientId}/clinical-record", {
+      params: { path: { patientId } },
+    });
+    return error || !data ? null : data;
+  } catch {
+    return null;
+  }
+}
+
+export async function updatePatientIntake(
+  patientId: string,
+  payload: UpdatePatientIntakeRequest,
+) {
+  const client = await getAuthenticatedClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client.PUT("/api/v1/patients/{patientId}/intake", {
+      params: { path: { patientId } },
+      body: payload,
+    });
+    return error || !data ? null : data;
+  } catch {
+    return null;
+  }
+}
+
+export async function startPatientConsultation(
+  patientId: string,
+): Promise<ConsultationWorkspace | null> {
+  const client = await getAuthenticatedClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client.POST("/api/v1/patients/{patientId}/consultations", {
+      params: { path: { patientId } },
+    });
+    return error || !data ? null : data;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveClinicalNoteDraft(
+  patientId: string,
+  consultationId: string,
+  payload: UpdateClinicalNoteRequest,
+): Promise<ConsultationWorkspace | null> {
+  const client = await getAuthenticatedClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client.PUT(
+      "/api/v1/patients/{patientId}/consultations/{consultationId}/note",
+      {
+        params: { path: { patientId, consultationId } },
+        body: payload,
+      },
+    );
+    return error || !data ? null : data;
+  } catch {
+    return null;
+  }
+}
+
+export async function finalizeClinicalNote(
+  patientId: string,
+  consultationId: string,
+): Promise<ConsultationWorkspace | null> {
+  const client = await getAuthenticatedClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client.POST(
+      "/api/v1/patients/{patientId}/consultations/{consultationId}/finalize",
+      { params: { path: { patientId, consultationId } } },
+    );
+    return error || !data ? null : data;
+  } catch {
+    return null;
+  }
+}
+
+export async function startClinicalNoteAmendment(
+  patientId: string,
+  consultationId: string,
+  payload: CreateAmendmentRequest,
+): Promise<ConsultationWorkspace | null> {
+  const client = await getAuthenticatedClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client.POST(
+      "/api/v1/patients/{patientId}/consultations/{consultationId}/amendments",
+      {
+        params: { path: { patientId, consultationId } },
+        body: payload,
+      },
+    );
     return error || !data ? null : data;
   } catch {
     return null;
