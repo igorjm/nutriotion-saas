@@ -72,6 +72,108 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/patients/{patientId}/clinical-record": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Return the active Organization-scoped Patient 360 clinical record */
+        get: operations["getPatientClinicalRecord"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patients/{patientId}/intake": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Create or update the active care relationship intake record */
+        put: operations["updatePatientIntake"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patients/{patientId}/consultations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start or return the current in-progress consultation */
+        post: operations["startPatientConsultation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patients/{patientId}/consultations/{consultationId}/note": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Autosave the mutable draft of a consultation note */
+        put: operations["saveClinicalNoteDraft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patients/{patientId}/consultations/{consultationId}/finalize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Finalize the current draft as an immutable clinical note version */
+        post: operations["finalizeClinicalNote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patients/{patientId}/consultations/{consultationId}/amendments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new draft version linked to a finalized note */
+        post: operations["startClinicalNoteAmendment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/patient-invitations": {
         parameters: {
             query?: never;
@@ -171,6 +273,71 @@ export interface components {
             /** Format: date-time */
             relationshipCreatedAt: string;
         };
+        PatientClinicalRecord: {
+            /** Format: uuid */
+            patientId: string;
+            displayName: string;
+            /** Format: email */
+            contactEmail: string | null;
+            careFocus: string | null;
+            /** @enum {string} */
+            relationshipStatus: "ACTIVE";
+            intake: components["schemas"]["PatientIntakeRecord"] | null;
+            consultation: components["schemas"]["ConsultationWorkspace"] | null;
+        };
+        PatientIntakeRecord: {
+            allergies: string;
+            foodRestrictions: string;
+            clinicalHistory: string;
+            routineNotes: string;
+            careGoal: string;
+            version: number;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdatePatientIntakeRequest: {
+            allergies: string;
+            foodRestrictions: string;
+            clinicalHistory: string;
+            routineNotes: string;
+            careGoal: string;
+        };
+        ConsultationWorkspace: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            status: "IN_PROGRESS" | "FINALIZED";
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            finalizedAt: string | null;
+            note: components["schemas"]["ClinicalNoteRecord"];
+        };
+        ClinicalNoteRecord: {
+            /** Format: uuid */
+            id: string;
+            version: number;
+            /** @enum {string} */
+            status: "DRAFT" | "FINALIZED";
+            subjective: string;
+            objective: string;
+            assessment: string;
+            agreedActions: string;
+            amendmentReason: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            finalizedAt: string | null;
+        };
+        UpdateClinicalNoteRequest: {
+            subjective: string;
+            objective: string;
+            assessment: string;
+            agreedActions: string;
+        };
+        CreateAmendmentRequest: {
+            reason: string;
+        };
         CreatePatientInvitationRequest: {
             displayName: string;
             /** Format: email */
@@ -233,7 +400,10 @@ export interface components {
             };
         };
     };
-    parameters: never;
+    parameters: {
+        PatientId: string;
+        ConsultationId: string;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
@@ -332,6 +502,177 @@ export interface operations {
             };
             401: components["responses"]["Problem"];
             403: components["responses"]["Problem"];
+        };
+    };
+    getPatientClinicalRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: components["parameters"]["PatientId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Patient record with intake and latest consultation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientClinicalRecord"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+        };
+    };
+    updatePatientIntake: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: components["parameters"]["PatientId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePatientIntakeRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated intake record */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PatientIntakeRecord"];
+                };
+            };
+            400: components["responses"]["Problem"];
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+        };
+    };
+    startPatientConsultation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: components["parameters"]["PatientId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Consultation workspace started */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsultationWorkspace"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+        };
+    };
+    saveClinicalNoteDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: components["parameters"]["PatientId"];
+                consultationId: components["parameters"]["ConsultationId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateClinicalNoteRequest"];
+            };
+        };
+        responses: {
+            /** @description Autosaved consultation workspace */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsultationWorkspace"];
+                };
+            };
+            400: components["responses"]["Problem"];
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    finalizeClinicalNote: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: components["parameters"]["PatientId"];
+                consultationId: components["parameters"]["ConsultationId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Finalized consultation workspace */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsultationWorkspace"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    startClinicalNoteAmendment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: components["parameters"]["PatientId"];
+                consultationId: components["parameters"]["ConsultationId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAmendmentRequest"];
+            };
+        };
+        responses: {
+            /** @description Amendment draft created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsultationWorkspace"];
+                };
+            };
+            400: components["responses"]["Problem"];
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
         };
     };
     createPatientInvitation: {

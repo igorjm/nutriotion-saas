@@ -1,4 +1,5 @@
 import { CircleAlert, Clock3, Users } from "lucide-react";
+import Link from "next/link";
 import { ProfessionalSidebar } from "@/components/professional-sidebar";
 import { getPatients } from "@/lib/api/server";
 import { InvitePatientForm } from "./invite-patient-form";
@@ -20,7 +21,7 @@ export default async function ProfessionalPatientsPage() {
       <ProfessionalSidebar active="patients" />
       <section className="professional-content">
         <header>
-          <div><span className="eyebrow">Sprint 1</span><h1>Pacientes</h1></div>
+          <div><span className="eyebrow">Sprint 2</span><h1>Pacientes</h1></div>
           <span className="environment-badge">DESENVOLVIMENTO · DADOS FICTÍCIOS</span>
         </header>
 
@@ -46,12 +47,12 @@ export default async function ProfessionalPatientsPage() {
                 <div><strong>Nenhum paciente ainda.</strong><p>Crie o primeiro convite fictício ao lado.</p></div>
               </div>
             ) : (
-              <div className="patient-list" role="table" aria-label="Pacientes da organização">
-                <div className="patient-list-row patient-list-header" role="row">
+              <div className="patient-list" aria-label="Pacientes da organização">
+                <div className="patient-list-row patient-list-header">
                   <span>Paciente</span><span>Foco inicial</span><span>Status</span>
                 </div>
-                {patients.map((patient) => (
-                  <div className="patient-list-row" role="row" key={patient.id}>
+                {patients.map((patient) => {
+                  const content = <>
                     <span className="patient-list-identity">
                       <i>{patient.displayName.split(" ").slice(0, 2).map((part) => part[0]).join("")}</i>
                       <span><strong>{patient.displayName}</strong><small>{patient.contactEmail ?? "Contato ainda não informado"}</small></span>
@@ -60,8 +61,15 @@ export default async function ProfessionalPatientsPage() {
                     <span className={`relationship-status ${patient.relationshipStatus.toLowerCase()}`}>
                       <Clock3 /> {statusLabels[patient.relationshipStatus] ?? patient.relationshipStatus}
                     </span>
-                  </div>
-                ))}
+                  </>;
+                  return patient.relationshipStatus === "ACTIVE" ? (
+                    <Link className="patient-list-row patient-list-link" href={`/professional/patients/${patient.id}`} key={patient.id}>
+                      {content}
+                    </Link>
+                  ) : (
+                    <div className="patient-list-row" key={patient.id}>{content}</div>
+                  );
+                })}
               </div>
             )}
           </section>
